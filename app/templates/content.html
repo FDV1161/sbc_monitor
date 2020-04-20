@@ -1,0 +1,130 @@
+<h3>Client1</h3>
+
+<div class="row">
+  <div class="col">
+    <div class="jumbotron p-3">
+      <h5 style="color:#6c757d;">Описание</h5>
+      <p>     
+        <button type="button" class="btn btn-link float-right" data-toggle="modal" data-target="#exampleModal">Редактировать</button>      
+        <button type="button" class="btn btn-link" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Добавить описание</button>        
+      </p>
+    </div>
+  </div>
+  <div class="col">
+    <div class="jumbotron p-3">
+      <h5 style="color:#6c757d;">Текущее состояние</h5>
+      <div class="table-responsive">
+        <table class="table table-borderless table-sm">          
+            <tbody>
+              <tr>
+                <td class="Подключение Отсутствует">Состояние</td>        
+                <td><span class="badge badge-success ">Подключен</span></td>
+              </tr>
+              <!--<tr>
+                <td colspan="2">
+                <div class="btn-group align-center d-flex justify-content-center"  role="group" aria-label="Basic example">
+                  <button type="button" class="btn btn-sm btn-primary">Включить</button>
+                  <button type="button" class="btn btn-sm btn-secondary">Настроить</button>            
+                </div>
+                </td>
+              </tr>  -->
+              <tr>
+                <td class="">Реальный адрес:</td>        
+                <td class="">127.0.0.1:7021</td>      
+              </tr>
+              
+              <tr>
+                <td class="">Виртуальный адрес:</td>        
+                <td class="">129.123.126.212</td>      
+              </tr>  
+              <tr>
+                <td class="">Переадресация:</td>        
+                <td class=""><span class="badge badge-danger ">Выключена</span> <!--<button class="btn btn-link" > (включить) </button> --> </td>      
+              </tr>              
+            </tbody>
+          </table>
+          <!-- <button class="btn btn-primary btn-sm float-right">Включить переадрессацию</button>       -->
+          <div class="btn-group align-center d-flex justify-content-center"  role="group" aria-label="Basic example">
+            <button type="button" class="btn btn-sm btn-primary">Выключить</button>
+            <!--<button type="button" class="btn btn-sm btn-primary">Включить</button>-->
+            <button type="button" class="btn btn-sm btn-secondary">Настроить</button>            
+          </div>
+      </div>       
+    </div>
+  </div>
+</div>
+
+<!-- <button type="button" class="btn btn-primary">Включить переадресацию</button> -->
+
+<div class="table-responsive">
+  <table class="table table-sm table-bordered table-hover ">
+    <caption style="caption-side: top;"><h5>Передресация включена<h5></caption>
+      <thead class="thead-light">
+        <tr>
+          <th class="text-center">Порт назначения</th>        
+          <th class="text-center">Выделенный Порт </th>
+          <th class="text-center">Отключение</th>      
+        </tr>
+      </thead>
+      <tbody>  
+        <tr>
+          <td class="text-center">22</td>        
+          <td class="text-center">80239 </td>      
+          <td class="text-center">Закрыть</td>
+        </tr>  
+        <tr>
+          <td class="text-center">80</td>        
+          <td class="text-center">80249 </td>      
+          <td class="text-center">Закрыть</td>
+        </tr>  
+      </tbody>
+    </table>
+  </div>
+  <button type="button" class="btn btn-danger float-right">Выключить переадресацию</button>
+
+
+
+
+
+
+
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover ">
+      <caption style="caption-side: top;"><h5>Журнал подключений<h5></caption>
+        <thead class="thead-light">
+          <tr>
+            <th class="text-center">Дата</th>        
+            <th class="text-center">Реальный адрес</th>
+            <th class="text-center">Виртуальный адрес</th>        
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="text-center"> </td>        
+            <td class="text-center"> qw </td>
+            <td class="text-center"> qw </td>
+          </tr>          
+          
+        </tbody>
+      </table>
+    </div>
+    <nav class="float-right" aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item">
+          <a class="page-link" href="#" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+          <a class="page-link" href="#" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">All</a></li>
+      </ul>
+    </nav>                
