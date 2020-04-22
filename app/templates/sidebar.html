@@ -1,41 +1,25 @@
-  <nav class="navbar flex-column list-group list-group-flush bg-light p-0 overflow-auto" >        
-        <input class="form-control mt-2 mb-2" type="search" placeholder="Search" aria-label="Search">        
-        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" style="cursor: pointer">
-          Cras justo odio
-          <span class="badge badge-danger badge-pill" style="background: red;">&#9211;</span>
-        </li>                  
-        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" style="cursor: pointer">
-          Vestibulum at eros asdas
-          <span class="badge badge-success badge-pill">&#9211;</span>
-        </li>
-        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" style="cursor: pointer">
-          Vestibulum at eros asdas
-          <span class="badge badge-success badge-pill"><i class="fas fa-power-off"></i></span>
-        </li>
-        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" style="cursor: pointer">
-          Vestibulum at eros asdas
-          <span class="badge badge-success badge-pill">
-              <img src="{{ url_for('static', filename='fontawesome/svgs/solid/power-off.svg') }}" style="width: 10px; height: 10px;">
-          </span>
-        </li>
-        
-        {% for sbc in list_sbc %}
-
-        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" style="cursor: pointer">          
-          {{sbc.name}} 
-
-            {% for log in sbc.logs %}
-              {{log.date | last }}
-            {% endfor %}
-
-          <span class="badge badge-success badge-pill">
+  <nav class="navbar bg-light p-0 overflow-auto">
+    <input class="form-control mt-2 mb-2" type="search" placeholder="Search" aria-label="Search" onsearch="search_sbc()" onkeyup="search_sbc()" id="search_sbc">
+    <ul class="list-group list-group flex-column w-100" id="sidebar_list">
+      
+      {% for row in list_sbc_status %}
+      <a class="list_element list-group-item list-group-item-action" style="cursor: pointer" href="{{ url_for('index', choice_sbc_id=row[0].id) }}">
+        <div class="d-flex justify-content-between align-items-center">
+        <div>{{ row[0].name}}</div>
+        {% if row[1] %}
+          {% if row[1].type|string()|lower() == "connect" %}              
+            <span class="badge badge-success badge-pill">
               <i class="fas fa-power-off"></i>
-          </span>
-        </li>
-
-        {% endfor %}
-       
-        
-      
-      
+            </span>
+          {% elif row[1].type|string()|lower() == "disconnect" %}
+            <span class="badge badge-danger badge-pill">
+              <i class="fas fa-power-off"></i>
+            </span>
+          {% endif %}
+        {% endif %}        
+        </div>
+      </a>
+    
+    {% endfor %}
+    </ul>
   </nav>

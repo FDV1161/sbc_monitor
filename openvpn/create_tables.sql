@@ -113,3 +113,6 @@ FROM logs GROUP BY logs.sbc) AS last_connect ON sbc.id = last_connect.sbc LEFT O
 SELECT sbc.id AS sbc_id, sbc.name AS sbc_name, sbc.description AS sbc_description, logs.id AS logs_id, logs.date AS logs_date, logs.type AS logs_type, logs.`realAddress` AS `logs_realAddress`, logs.`virtualAddress` AS `logs_virtualAddress`, logs.sbc 
 FROM sbc LEFT OUTER JOIN (SELECT logs.sbc, max(logs.date) AS max_date 
 FROM logs GROUP BY logs.sbc) AS last_connect ON sbc.id = last_connect.sbc LEFT OUTER JOIN logs ON logs.sbc = last_connect.sbc AND logs.date = last_connect.max_date
+
+
+insert into logs (sbc_id, date, type, realADdress, virtualAddress) values ("4", "2020-05-22 12:30:00", 'disconnect', "12.53.12.55", '12.62.654.98');

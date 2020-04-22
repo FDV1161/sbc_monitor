@@ -1,10 +1,14 @@
-<h3>Client1</h3>
+{% if not currend_sbc %}
+<h3 class="h3 text-center">Ошибка! Информация об одноплатном компьютере не найдена.</h3>
+{%else%}
+<h3>{{ currend_sbc[0].name }}</h3>
 
 <div class="row">
   <div class="col">
     <div class="jumbotron p-3">
       <h5 style="color:#6c757d;">Описание</h5>
-      <p>     
+      <p>
+        {{ currend_sbc[0].description or "" }}
         <button type="button" class="btn btn-link float-right" data-toggle="modal" data-target="#exampleModal">Редактировать</button>      
         <button type="button" class="btn btn-link" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Добавить описание</button>        
       </p>
@@ -14,41 +18,47 @@
     <div class="jumbotron p-3">
       <h5 style="color:#6c757d;">Текущее состояние</h5>
       <div class="table-responsive">
+        
         <table class="table table-borderless table-sm">          
-            <tbody>
-              <tr>
-                <td class="Подключение Отсутствует">Состояние</td>        
-                <td><span class="badge badge-success ">Подключен</span></td>
-              </tr>
-              <!--<tr>
-                <td colspan="2">
-                <div class="btn-group align-center d-flex justify-content-center"  role="group" aria-label="Basic example">
-                  <button type="button" class="btn btn-sm btn-primary">Включить</button>
-                  <button type="button" class="btn btn-sm btn-secondary">Настроить</button>            
-                </div>
-                </td>
-              </tr>  -->
-              <tr>
-                <td class="">Реальный адрес:</td>        
-                <td class="">127.0.0.1:7021</td>      
-              </tr>
-              
-              <tr>
-                <td class="">Виртуальный адрес:</td>        
-                <td class="">129.123.126.212</td>      
-              </tr>  
-              <tr>
-                <td class="">Переадресация:</td>        
-                <td class=""><span class="badge badge-danger ">Выключена</span> <!--<button class="btn btn-link" > (включить) </button> --> </td>      
-              </tr>              
-            </tbody>
-          </table>
-          <!-- <button class="btn btn-primary btn-sm float-right">Включить переадрессацию</button>       -->
-          <div class="btn-group align-center d-flex justify-content-center"  role="group" aria-label="Basic example">
-            <button type="button" class="btn btn-sm btn-primary">Выключить</button>
-            <!--<button type="button" class="btn btn-sm btn-primary">Включить</button>-->
-            <button type="button" class="btn btn-sm btn-secondary">Настроить</button>            
-          </div>
+          
+          <tbody>
+            <tr>
+              <td class="">Состояние:</td>
+              {% if currend_sbc[1].type|string()|lower() == 'connect'  %}              
+              <td><span class="badge badge-success">Подключен</span></td>
+              {% else %}
+              <td><span class="badge badge-danger">Отключен</span></td>
+              {% endif %}
+            </tr>            
+            <tr>
+              <td class="">Реальный адрес:</td>        
+              {% if currend_sbc[1].realAddress %}
+                <td class="">{{currend_sbc[1].realAddress}}</td>      
+              {% else %}
+                <td class="">не определено</td>
+              {% endif %}
+            </tr>            
+            <tr>
+              <td class="">Виртуальный адрес:</td>        
+              {% if currend_sbc[1].realAddress %}
+                <td class="">{{currend_sbc[1].virtualAddress}}</td>      
+              {% else %}
+                <td class="">не определено</td>
+              {% endif %}
+            </tr>  
+            <tr>
+              <td class="">Переадресация:</td>        
+              <td class=""><span class="badge badge-danger ">Выключена</span> <!--<button class="btn btn-link" > (включить) </button> --> </td>      
+            </tr>              
+          </tbody>
+        </table>                
+        
+        <!-- <button class="btn btn-primary btn-sm float-right">Включить переадрессацию</button>       -->
+        <div class="btn-group align-center d-flex justify-content-center"  role="group" aria-label="Basic example">
+          <button type="button" class="btn btn-sm btn-primary">Выключить</button>
+          <!--<button type="button" class="btn btn-sm btn-primary">Включить</button>-->
+          <button type="button" class="btn btn-sm btn-secondary">Настроить</button>            
+        </div>
       </div>       
     </div>
   </div>
@@ -127,4 +137,5 @@
         </li>
         <li class="page-item"><a class="page-link" href="#">All</a></li>
       </ul>
-    </nav>                
+    </nav>       
+{% endif %}        
