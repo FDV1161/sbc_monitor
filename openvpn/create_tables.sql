@@ -14,7 +14,17 @@ CREATE TABLE logs(
     FOREIGN KEY (sbc_id) REFERENCES sbc (id) 
 );
 
+CREATE TABLE ports(
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    sbc_id INT NOT NULL, 
+    destination_port INT NOT NULL, 
+    dedicated_port INT UNIQUE, 
+    date_open DATETIME,
+    FOREIGN KEY (sbc_id) REFERENCES sbc (id) 
+);
 
+insert into (sbc_id, port, date_open) values (1, 2020 ,"2020-05-22 12:30:00");
+insert into ports (sbc_id, destination_port, dedicated_port, date_open) values (1, 22, 2020 ,"2020-05-22 12:30:00");
 
 
 select * from sbc left join lofs on sbc.id = logs.sbc_id group by sbc.id 

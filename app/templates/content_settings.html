@@ -26,28 +26,29 @@
                 <th class="text-center">Удалить</th>
                 <th class="text-center">Порт назначения</th>        
                 <th class="text-center">Выделенный Порт </th>
+                <th class="text-center">Дата открытия</th>
                 <th class="text-center">Отключение</th>      
               </tr>
             </thead>
             <tbody>  
+              {% for port in sbc_ports %}
               <tr>
-                <td class="text-center">удалить</td>
-                <td class="text-center">22</td>        
-                <td class="text-center">80239 </td>      
-                <td class="text-center">Закрыть</td>
+                <!-- <form action="{{url_for('settings', choice_sbc_id=currend_sbc)}}" method="post"> -->
+                <td class="text-center">
+                  <!-- <button type="submit" name="delete_port" value="{{port.id}}" class="btn btn-sm btn-link">Удалить</button> -->
+                  {% include 'forms/delete_port.html' %}
+                </td>
+                <td class="text-center">{{port.destination_port}}</td>        
+                <td class="text-center">{{port.dedicated_port}}</td>
+                <td class="text-center">{{port.date_open}}</td>                
+                <td class="text-center">
+                  <!-- <button type="submit" name="open_port" value="{{port.id}}" class="btn btn-sm btn-link">Открыть</button> -->
+                  {% include 'forms/open_port.html' %}
+                </td>
+                <!-- </form> -->
               </tr>  
-              <tr>
-                <td class="text-center">удалить</td>
-                <td class="text-center">80</td>        
-                <td class="text-center">80249 </td>      
-                <td class="text-center">Закрыть</td>
-              </tr>  
-              <tr>
-                <td class="text-center">удалить</td>
-                <td class="text-center">80</td>        
-                <td class="text-center">80249 </td>      
-                <td class="text-center"><a href="#">Открыть</a></td>
-              </tr>  
+              
+              {% endfor %}
             </tbody>
           </table>
       </div>  
@@ -55,21 +56,26 @@
   </div>
   <div class="row">
     <div class="col">
-      <form >
+
+
+      <!-- <form action="{{ url_for('settings', choice_sbc_id=currend_sbc) }}" method="post">
         <div class="form-row">
           <div class="col col-sm-6 col-md-3 col-xl-2">
-            <input type="number" class="form-control" id="inputPort" placeholder="Добавить порт">
+            <input name="add_port" type="number" class="form-control" id="inputPort" placeholder="Добавить порт">
           </div>
           <div class="col">
             <button type="submit" class="btn btn-primary mb-2">Добавить</button>
           </div>
         </div>
-      </form>
+      </form> -->
+      {% include 'forms/add_port.html' %}
+
+
     </div>
   </div>
   <div class="row mt-5">
     <div class="col">
-      <button type="button" class="btn btn-secondary float-right">Назад</button>
+      <button type="button" class="btn btn-secondary float-right" OnClick = "history.back ()">Назад</button>
     </div>
   </div>  
 </div>

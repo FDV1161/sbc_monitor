@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <title>Document</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body">    
+    <div class="container-fluid h-100">
+        <div class="row">
+            {% include 'navbar.html' %}
+        </div>
+
+        <div class="row flex-x1-nowrap navbar-expand-lg h-100">
+            <div class="col-lg-2 col-xl-2 navbar-collapse collapse bg-light p-0 align-items-stretch" style="overflow: auto;" id="collapseOne">
+                <div class="container-fluid p-0">
+                    {% include 'sidebar.html' %}                    
+                </div>
+            </div>
+
+            <div class="col col-lg-10 col-xl-10 mt-2">                 
+                {% include 'content_settings.html' %}                    
+            </div>
+        </div>
+    </div>
+        {% include 'script.html' %}
+        {% include 'finder_script.html' %}
+    </body>
+
+
+</html>

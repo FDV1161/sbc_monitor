@@ -55,9 +55,9 @@
         
         <!-- <button class="btn btn-primary btn-sm float-right">Включить переадрессацию</button>       -->
         <div class="btn-group align-center d-flex justify-content-center"  role="group" aria-label="Basic example">
-          <button type="button" class="btn btn-sm btn-primary">Выключить</button>
-          <!--<button type="button" class="btn btn-sm btn-primary">Включить</button>-->
-          <button type="button" class="btn btn-sm btn-secondary">Настроить</button>            
+          <a class="btn btn-sm btn-primary text-white" href="{{ url_for('settings', choice_sbc_id=currend_sbc[0].id) }}">Выключить</a>
+          <!--<button type="button" class="btn btn-sm btn-primary">Включить</button>-->          
+          <a type="button" class="btn text-white btn-sm btn-secondary" href="{{ url_for('settings', choice_sbc_id=currend_sbc[0].id) }}">Настроить</a>
         </div>
       </div>       
     </div>
@@ -66,7 +66,7 @@
 
 <!-- <button type="button" class="btn btn-primary">Включить переадресацию</button> -->
 
-<div class="table-responsive">
+<!--<div class="table-responsive">
   <table class="table table-sm table-bordered table-hover ">
     <caption style="caption-side: top;"><h5>Передресация включена<h5></caption>
       <thead class="thead-light">
@@ -90,10 +90,10 @@
       </tbody>
     </table>
   </div>
-  <button type="button" class="btn btn-danger float-right">Выключить переадресацию</button>
+  <button type="button" class="btn btn-danger float-right">Выключить переадресацию</button>-->
 
 
-
+{% include 'open_ports.html' %}
 
 
 

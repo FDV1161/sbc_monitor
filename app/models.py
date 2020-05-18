@@ -8,6 +8,7 @@ class Sbc(db.Model):
 	name = db.Column(db.String(255), nullable=False)
 	description = db.Column(db.Text)
 
+
 class Logs(db.Model):
 	__tablename__ = 'logs'
 	id = db.Column(db.Integer, primary_key=True)
@@ -18,6 +19,16 @@ class Logs(db.Model):
 	sbc_id = db.Column(db.Integer, db.ForeignKey('sbc.id'), nullable=False)
 	sbc = db.relationship('Sbc', backref=db.backref('logs', lazy=True))
 
+
+class Ports(db.Model):
+	__tablename__ = 'ports'
+	id = db.Column(db.Integer, primary_key=True)
+	date_open = db.Column(db.DateTime, nullable=True)
+	destination_port = db.Column(db.Integer, nullable=False) 
+	dedicated_port = db.Column(db.Integer, nullable=True, unique = True) # nullable = True
+	sbc_id = db.Column(db.Integer, db.ForeignKey('sbc.id'), nullable=False)
+	sbc = db.relationship('Sbc', backref=db.backref('ports', lazy=True))   
+    
 
 
 

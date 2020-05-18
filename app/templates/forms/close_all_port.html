@@ -1,0 +1,5 @@
+<form action="{{url_for('settings', choice_sbc_id=currend_sbc)}}" method="post">
+    {{ forms.closeAllPort.csrf_token }}	
+    {{ forms.closeAllPort.sbc_number_cap(value=currend_sbc) }}
+    {{ forms.closeAllPort.submit(class="btn btn-sm btn-link") }}    
+</form>
