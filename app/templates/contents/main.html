@@ -1,3 +1,7 @@
+{% extends '/base.html' %}
+
+{% block content %}
+
 {% if not currend_sbc %}
 <h3 class="h3 text-center">Ошибка! Информация об одноплатном компьютере не найдена.</h3>
 {%else%}
@@ -93,9 +97,31 @@
   <button type="button" class="btn btn-danger float-right">Выключить переадресацию</button>-->
 
 
-{% include 'open_ports.html' %}
-
-
+  {% if sbc_ports %}
+  <div class="table-responsive">
+    <table class="table table-sm table-bordered table-hover ">
+      <caption style="caption-side: top;"><h5>Передресация включена<h5></caption>
+        <thead class="thead-light">
+          <tr>
+            <th class="text-center">Порт назначения</th>        
+            <th class="text-center">Выделенный Порт </th>
+            <th class="text-center">Дата открытия</th>      
+          </tr>
+        </thead>      
+        <tbody> 
+            {% for port in sbc_ports %} 
+          <tr>
+            <td class="text-center">{{port.destination_port}}</td>
+            <td class="text-center">{{port.dedicated_port}}</td>
+            <td class="text-center">{{port.date_open}}</td>          
+          </tr>          
+          {% endfor %}
+        </tbody>
+      </table>
+  </div>
+  
+  <button type="button" class="btn btn-danger float-right">Выключить переадресацию</button>
+  {% endif %}
 
 
 
@@ -139,3 +165,5 @@
       </ul>
     </nav>       
 {% endif %}        
+
+{% endblock %}

@@ -5,6 +5,9 @@ from threading import Timer
 
 
 def search_free_port():
+    """
+    Поиск сводоного порта
+    """
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     port = MIN_NUMBER_PORT
     while port <= MAX_NUMBER_PORT:
@@ -15,10 +18,11 @@ def search_free_port():
             return port
         except OSError:
             port += 1
-    raise IOError('сould not find a free port')
+    # raise IOError('сould not find a free port')
+    raise None
 
 
-def start_port_forwarding(destination_address, destination_port, dedicated_port):
+def start_port_forwarding(destination_address, destination_port, dedicated_port, timer_waiting=TIME_WAITING):
     """
     Запускает проброс порта
     """
@@ -30,3 +34,4 @@ def start_port_forwarding(destination_address, destination_port, dedicated_port)
     ]
     process = subprocess.Popen(command)
     Timer(TIME_WAITING, process.kill).start()
+    return process

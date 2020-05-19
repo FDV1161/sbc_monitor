@@ -2,7 +2,7 @@
 MIN_NUMBER_PORT = 4000
 MAX_NUMBER_PORT = 4999
 # время ожидание перед закрытием порта в секундах
-TIME_WAITING = 30  
+TIME_WAITING = 60  
 
 # username = ''
 # password = ''
@@ -14,7 +14,9 @@ TIME_WAITING = 30
 # класс для конфигурации flask
 class Config(object): 
 	# SQLALCHEMY_DATABASE_URI = 'mysql://localhost:8080@root:root/tmp/test.db'	
-	SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@localhost:8080/test?charset=utf8'
+	# TODO UTF8 UTF8MB3 UTF8MB4 ?
+	SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@localhost:8080/test?charset=utf8mb4'
+	SQLALCHEMY_TRACK_MODIFICATIONS = False
 	SECRET_KEY = 'flask project'
 	# pass
 	# host = '0.0.0.0'

@@ -1,5 +1,5 @@
-<form action="{{url_for('settings', choice_sbc_id=currend_sbc)}}" method="post">
-    {{ forms.openPort.csrf_token }}	
-    {{ forms.openPort.number_op(value=port.id) }}
-    {{ forms.openPort.submit(class="btn btn-sm btn-link") }}    
+<form action="{{url_for('open_port', choice_sbc_id=currend_sbc, port_id=port.id)}}">
+    <button type="submit" class="btn btn-sm btn-link">Открыть</button>
 </form>
+
+

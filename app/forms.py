@@ -10,26 +10,6 @@ class AddPortForm(FlaskForm):
 	number_ap = IntegerField('Номер порта', validators=[InputRequired(), NumberRange(min=1, max=65535)], render_kw={"placeholder": "Номер порта", 'min': '0', 'max':'65535'})
 	submit = SubmitField('Добавить')
 
-class DeletePortForm(FlaskForm):
-    """
-    форма для удаления номера порта из списка открываемых портов
-    """
-    number_dp = HiddenField()
-    submit = SubmitField('Удалить')
-
-class OpenPortForm(FlaskForm):
-    """
-    форма для открытия конкретного порта
-    """
-    number_op = HiddenField()
-    submit = SubmitField('Открыть')
-
-class ClosePortForm(FlaskForm):
-    """
-    форма для закрытия конкретного порта
-    """
-    number_cp = HiddenField()
-    submit = SubmitField('Закрыть')
 
 class OpenAllPortForm(FlaskForm):
     """
@@ -45,3 +25,7 @@ class CloseAllPortForm(FlaskForm):
     sbc_number_cap = HiddenField()
     submit = SubmitField('Закрыть')
 
+class tableForm(FlaskForm):
+    close_port = SubmitField('Закрыть')
+    open_port = SubmitField('Открыть')
+    del_port = SubmitField('Удалить')
