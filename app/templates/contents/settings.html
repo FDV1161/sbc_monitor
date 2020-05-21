@@ -7,9 +7,13 @@
     <div class="row">
       <div class="col"><h3>Client1</h3></div>
       <div class="col">
-        <div class="btn-group align-center d-flex justify-content-center"  role="group" aria-label="Basic example">
-          <button type="button" class="btn btn-sm btn-success">Открыть все</button>  
-          <button type="button" class="btn btn-sm btn-danger">Закрыть все</button>
+        <div class="btn-group d-flex flex-row-reverse"  role="group" aria-label="open close all ports">          
+          <div >
+            {% include '/forms/close_all_port.html' %}
+          </div>
+          <div class="pr-1">          
+          {% include '/forms/open_all_port.html' %}
+          </div>
         </div>
       </div>
     </div>
@@ -24,15 +28,14 @@
                   <th class="text-center">Порт назначения</th>        
                   <th class="text-center">Выделенный Порт </th>
                   <th class="text-center">Дата открытия</th>
+                  <th class="text-center">Время жизни</th>
                   <th class="text-center">Отключение</th>      
                 </tr>
               </thead>
               <tbody>  
                 {% for port in sbc_ports %}
-                <tr>
-                  <!-- <form action="{{url_for('settings', choice_sbc_id=currend_sbc)}}" method="post"> -->
-                  <td class="text-center">
-                    <!-- <button type="submit" name="delete_port" value="{{port.id}}" class="btn btn-sm btn-link">Удалить</button> -->
+                <tr>                  
+                  <td class="text-center">                    
                     {% include '/forms/delete_port.html' %}
                   </td>
                   <td class="text-center">{{port.destination_port}}</td>        
@@ -44,6 +47,11 @@
                   <td class="text-center">
                     {% if port.date_open%}
                       {{port.date_open}}
+                    {% endif %}
+                  </td>
+                  <td class="text-center">
+                    {% if port.time_live %}
+                      {{port.time_live}}
                     {% endif %}
                   </td>                
                   <td class="text-center">
@@ -65,26 +73,12 @@
     </div>
     <div class="row">
       <div class="col">
-  
-  
-        <!-- <form action="{{ url_for('settings', choice_sbc_id=currend_sbc) }}" method="post">
-          <div class="form-row">
-            <div class="col col-sm-6 col-md-3 col-xl-2">
-              <input name="add_port" type="number" class="form-control" id="inputPort" placeholder="Добавить порт">
-            </div>
-            <div class="col">
-              <button type="submit" class="btn btn-primary mb-2">Добавить</button>
-            </div>
-          </div>
-        </form> -->
-        {% include '/forms/add_port.html' %}
-  
-  
+        {% include '/forms/add_port.html' %}  
       </div>
     </div>
     <div class="row mt-5">
-      <div class="col">
-        <button type="button" class="btn btn-secondary float-right" OnClick = "history.back ()">Назад</button>
+      <div class="col">        
+          <button type="submit" class="btn btn-secondary float-right" onclick="location.href='{{url_for('index', sbc=currend_sbc_id)}}';">Назад</button>        
       </div>
     </div>  
   </div>

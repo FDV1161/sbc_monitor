@@ -12,9 +12,15 @@
     <div class="jumbotron p-3">
       <h5 style="color:#6c757d;">Описание</h5>
       <p>
-        {{ currend_sbc[0].description or "" }}
-        <button type="button" class="btn btn-link float-right" data-toggle="modal" data-target="#exampleModal">Редактировать</button>      
-        <button type="button" class="btn btn-link" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Добавить описание</button>        
+        <pre>{{ currend_sbc[0].description or "" }}</pre>
+        {% if currend_sbc[0].description %}        
+        <button type="button" class="btn btn-link float-right" data-toggle="modal" data-target="#exampleModal">Редактировать</button>        
+        {% else %}
+        <button type="button" class="btn btn-link float-right" data-toggle="modal" data-target="#exampleModal"
+          data-whatever="@mdo">Добавить описание</button>
+        {% endif %}
+        {% include 'modal.html'%}
+        <br>
       </p>
     </div>
   </div>
@@ -22,48 +28,44 @@
     <div class="jumbotron p-3">
       <h5 style="color:#6c757d;">Текущее состояние</h5>
       <div class="table-responsive">
-        
-        <table class="table table-borderless table-sm">          
-          
+
+        <table class="table table-borderless table-sm">
+
           <tbody>
             <tr>
               <td class="">Состояние:</td>
-              {% if currend_sbc[1].type|string()|lower() == 'connect'  %}              
+              {% if currend_sbc[1].type|string()|lower() == 'connect'  %}
               <td><span class="badge badge-success">Подключен</span></td>
               {% else %}
               <td><span class="badge badge-danger">Отключен</span></td>
               {% endif %}
-            </tr>            
+            </tr>
             <tr>
-              <td class="">Реальный адрес:</td>        
+              <td class="">Реальный адрес:</td>
               {% if currend_sbc[1].realAddress %}
-                <td class="">{{currend_sbc[1].realAddress}}</td>      
+              <td class="">{{currend_sbc[1].realAddress}}</td>
               {% else %}
-                <td class="">не определено</td>
+              <td class="">не определено</td>
               {% endif %}
-            </tr>            
+            </tr>
             <tr>
-              <td class="">Виртуальный адрес:</td>        
+              <td class="">Виртуальный адрес:</td>
               {% if currend_sbc[1].realAddress %}
-                <td class="">{{currend_sbc[1].virtualAddress}}</td>      
+              <td class="">{{currend_sbc[1].virtualAddress}}</td>
               {% else %}
-                <td class="">не определено</td>
+              <td class="">не определено</td>
               {% endif %}
-            </tr>  
-            <tr>
-              <td class="">Переадресация:</td>        
-              <td class=""><span class="badge badge-danger ">Выключена</span> <!--<button class="btn btn-link" > (включить) </button> --> </td>      
-            </tr>              
+            </tr>
           </tbody>
-        </table>                
-        
-        <!-- <button class="btn btn-primary btn-sm float-right">Включить переадрессацию</button>       -->
-        <div class="btn-group align-center d-flex justify-content-center"  role="group" aria-label="Basic example">
-          <a class="btn btn-sm btn-primary text-white" href="{{ url_for('settings', choice_sbc_id=currend_sbc[0].id) }}">Выключить</a>
-          <!--<button type="button" class="btn btn-sm btn-primary">Включить</button>-->          
-          <a type="button" class="btn text-white btn-sm btn-secondary" href="{{ url_for('settings', choice_sbc_id=currend_sbc[0].id) }}">Настроить</a>
+        </table>
+
+        <div class="btn-group d-flex flex-row-reverse" role="group" aria-label="Basic example">
+          <div>
+            <a type="button" class="btn text-white btn-sm btn-secondary"
+              href="{{ url_for('settings', sbc=currend_sbc[0].id) }}">Настроить переадресацию</a>
+          </div>
         </div>
-      </div>       
+      </div>
     </div>
   </div>
 </div>
@@ -97,73 +99,81 @@
   <button type="button" class="btn btn-danger float-right">Выключить переадресацию</button>-->
 
 
-  {% if sbc_ports %}
-  <div class="table-responsive">
-    <table class="table table-sm table-bordered table-hover ">
-      <caption style="caption-side: top;"><h5>Передресация включена<h5></caption>
-        <thead class="thead-light">
-          <tr>
-            <th class="text-center">Порт назначения</th>        
-            <th class="text-center">Выделенный Порт </th>
-            <th class="text-center">Дата открытия</th>      
-          </tr>
-        </thead>      
-        <tbody> 
-            {% for port in sbc_ports %} 
-          <tr>
-            <td class="text-center">{{port.destination_port}}</td>
-            <td class="text-center">{{port.dedicated_port}}</td>
-            <td class="text-center">{{port.date_open}}</td>          
-          </tr>          
-          {% endfor %}
-        </tbody>
-      </table>
-  </div>
+{% if sbc_ports %}
+<div class="table-responsive">
+  <table class="table table-sm table-bordered table-hover ">
+    <caption style="caption-side: top;">
+      <h5>Таблица переадресации<h5>
+    </caption>
+    <thead class="thead-light">
+      <tr>
+        <th class="text-center">Порт назначения</th>
+        <th class="text-center">Выделенный Порт </th>
+        <th class="text-center">Дата открытия</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for port in sbc_ports %}
+      <tr>
+        <td class="text-center">{% if port.destination_port %} {{port.destination_port}} {% endif %}</td>
+        <td class="text-center">{% if port.dedicated_port %} {{port.dedicated_port}} {% endif %}</td>
+        <td class="text-center">{% if port.date_open %} {{port.date_open}} {% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+{% endif %}
+
+
+
+<div class="table-responsive">
   
-  <button type="button" class="btn btn-danger float-right">Выключить переадресацию</button>
-  {% endif %}
+  <table class="table table-bordered table-hover ">
+    <caption style="caption-side: top;">
+      <h5>Журнал подключений<h5>
+    </caption>
+    <thead class="thead-light">
+      <tr>
+        <th class="text-center">Дата</th>
+        <th class="text-center">Реальный адрес</th>
+        <th class="text-center">Виртуальный адрес</th>
+        <th class="text-center">Тип подключения</th>
+      </tr>
+    </thead>
+    
+    <tbody>
+      {% for record in history.list%}
+      <tr>
+        <td class="text-center">{{record.date}}</td>
+        <td class="text-center">{{record.realAddress}}</td>
+        <td class="text-center">{{record.virtualAddress}}</td>
+        <td class="text-center">{{record.type}}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="4"><h5>Нет записей<h5></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+</div>
 
+{% if not history.max_page %}
+<nav class="float-right" aria-label="Page navigation example">
+  <ul class="pagination">
+    <li class="page-item">
+      <form action="{{url_for('index', sbc=currend_sbc_id, page=history.page)}}" method="get">      
+        <button type="submit" class="btn btn-sm btn-link page-link">Загрузить еще</button>      
+    </form>
+    </li>    
+  </ul>
+</nav>
+{% endif %}
 
-
-  <div class="table-responsive">
-    <table class="table table-bordered table-hover ">
-      <caption style="caption-side: top;"><h5>Журнал подключений<h5></caption>
-        <thead class="thead-light">
-          <tr>
-            <th class="text-center">Дата</th>        
-            <th class="text-center">Реальный адрес</th>
-            <th class="text-center">Виртуальный адрес</th>        
-          </tr>
-        </thead>
-        <tbody>
-          
-          <tr>
-            <td class="text-center"> </td>        
-            <td class="text-center"> qw </td>
-            <td class="text-center"> qw </td>
-          </tr>          
-          
-        </tbody>
-      </table>
-    </div>
-    <nav class="float-right" aria-label="Page navigation example">
-      <ul class="pagination">
-        <li class="page-item">
-          <a class="page-link" href="#" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
-        <li class="page-item">
-          <a class="page-link" href="#" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-        <li class="page-item"><a class="page-link" href="#">All</a></li>
-      </ul>
-    </nav>       
-{% endif %}        
+{% endif %}
 
 {% endblock %}

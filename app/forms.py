@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, HiddenField
+from wtforms import StringField, SubmitField, HiddenField, TextAreaField
 from wtforms.validators import InputRequired, NumberRange
 from wtforms.fields.html5 import IntegerField
 
@@ -9,6 +9,11 @@ class AddPortForm(FlaskForm):
     """
 	number_ap = IntegerField('Номер порта', validators=[InputRequired(), NumberRange(min=1, max=65535)], render_kw={"placeholder": "Номер порта", 'min': '0', 'max':'65535'})
 	submit = SubmitField('Добавить')
+
+class DescriptionForm(FlaskForm):
+    text = TextAreaField()
+    
+
 
 
 class OpenAllPortForm(FlaskForm):

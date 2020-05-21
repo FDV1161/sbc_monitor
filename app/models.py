@@ -19,16 +19,17 @@ class Logs(db.Model):
 	sbc_id = db.Column(db.Integer, db.ForeignKey('sbc.id'), nullable=False)
 	sbc = db.relationship('Sbc', backref=db.backref('logs', lazy=True))
 
-
-class Ports(db.Model):
-	__tablename__ = 'ports'
+# Forwarding
+class Forwarding(db.Model):
+	__tablename__ = 'forwarding'
 	id = db.Column(db.Integer, primary_key=True)
 	date_open = db.Column(db.DateTime, nullable=True)
 	destination_port = db.Column(db.Integer, nullable=False) 
 	dedicated_port = db.Column(db.Integer, nullable=True, unique = True) # nullable = True
 	sbc_id = db.Column(db.Integer, db.ForeignKey('sbc.id'), nullable=False)
-	sbc = db.relationship('Sbc', backref=db.backref('ports', lazy=True))   
-    
+	sbc = db.relationship('Sbc', backref=db.backref('forwarding', lazy=True))   
+	time_live = db.Column(db.Integer, nullable=True)
+	pid = db.Column(db.Integer, nullable=True)
 
 
 

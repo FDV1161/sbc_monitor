@@ -1,6 +1,6 @@
 <!-- форма для добавления номера порта к списку открываемых портов -->
 
-<form action="{{ url_for('settings', choice_sbc_id=currend_sbc) }}" method="post">
+<form action="{{ url_for('settings', sbc=currend_sbc_id) }}" method="post">
 	{{ forms.addPort.csrf_token }}	
 	<div class="form-row">
 	  <div class="col col-sm-6 col-md-3 col-xl-2">

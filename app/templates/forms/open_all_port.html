@@ -1,5 +1,3 @@
-<form action="{{url_for('settings', choice_sbc_id=currend_sbc)}}" method="post">
-    {{ forms.openAllPort.csrf_token }}	
-    {{ forms.openAllPort.sbc_number_oap(value=currend_sbc) }}
-    {{ forms.openAllPort.submit(class="btn btn-sm btn-link") }}    
+<form action="{{url_for('open_all_port', sbc=currend_sbc_id)}}">    
+    <button type="submit" class="btn btn-sm btn-success">Открыть все</button>  
 </form>
