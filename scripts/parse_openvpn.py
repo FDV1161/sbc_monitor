@@ -26,16 +26,19 @@ cur.execute("SELECT id FROM sbc WHERE name='{}'".format(common_name))
 if cur.rowcount:
         # если запись найдена, заносим информацию в таблицу лог
         id = cur.fetchone()[0]
-        cur.execute("insert into logs(sbc, date, type, realAddress, virtualAddress) \
+        connected = True if script_type == 'connect' else False
+        cur.execute("UPDATE sbc SET connected='{}' WHERE id='{}'".format(connected, id))
+        cur.execute("insert into logs(sbc_id, date, type, realAddress, virtualAddress) \
                         values('{}', '{}', '{}', '{}', '{}')".format(id, connect_time, script_type, real_address, virtual_address))
         connect.commit()
 else:
         # создаем запись о новом ОК
-        cur.execute("INSERT INTO sbc (name) VALUES ('{}')".format(common_name))
+        connected = True if script_type == 'connect' else False
+        cur.execute("INSERT INTO sbc (name, connected) VALUES ('{}', '{}')".format(common_name, connected))
         # получаем id последней вставленной записи и заносим информацию в таблицу лог
         cur.execute('SELECT LAST_INSERT_ID()')
         id = cur.fetchone()[0]
-        cur.execute("INSERT INTO logs(sbc, date, type, realAddress, virtualAddress) \
+        cur.execute("INSERT INTO logs(sbc_id, date, type, realAddress, virtualAddress) \
                         VALUES('{}', '{}', '{}', '{}', '{}')".format(id, connect_time, script_type, real_address, virtual_address))
         connect.commit()
 cur.close()

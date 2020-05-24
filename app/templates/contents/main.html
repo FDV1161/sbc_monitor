@@ -1,179 +1,48 @@
 {% extends '/base.html' %}
-
 {% block content %}
-
-{% if not currend_sbc %}
-<h3 class="h3 text-center">Ошибка! Информация об одноплатном компьютере не найдена.</h3>
-{%else%}
-<h3>{{ currend_sbc[0].name }}</h3>
-
-<div class="row">
-  <div class="col">
-    <div class="jumbotron p-3">
-      <h5 style="color:#6c757d;">Описание</h5>
-      <p>
-        <pre>{{ currend_sbc[0].description or "" }}</pre>
-        {% if currend_sbc[0].description %}        
-        <button type="button" class="btn btn-link float-right" data-toggle="modal" data-target="#exampleModal">Редактировать</button>        
-        {% else %}
-        <button type="button" class="btn btn-link float-right" data-toggle="modal" data-target="#exampleModal"
-          data-whatever="@mdo">Добавить описание</button>
-        {% endif %}
-        {% include 'modal.html'%}
-        <br>
-      </p>
-    </div>
-  </div>
-  <div class="col">
-    <div class="jumbotron p-3">
-      <h5 style="color:#6c757d;">Текущее состояние</h5>
-      <div class="table-responsive">
-
-        <table class="table table-borderless table-sm">
-
-          <tbody>
-            <tr>
-              <td class="">Состояние:</td>
-              {% if currend_sbc[1].type|string()|lower() == 'connect'  %}
-              <td><span class="badge badge-success">Подключен</span></td>
-              {% else %}
-              <td><span class="badge badge-danger">Отключен</span></td>
-              {% endif %}
-            </tr>
-            <tr>
-              <td class="">Реальный адрес:</td>
-              {% if currend_sbc[1].realAddress %}
-              <td class="">{{currend_sbc[1].realAddress}}</td>
-              {% else %}
-              <td class="">не определено</td>
-              {% endif %}
-            </tr>
-            <tr>
-              <td class="">Виртуальный адрес:</td>
-              {% if currend_sbc[1].realAddress %}
-              <td class="">{{currend_sbc[1].virtualAddress}}</td>
-              {% else %}
-              <td class="">не определено</td>
-              {% endif %}
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="btn-group d-flex flex-row-reverse" role="group" aria-label="Basic example">
-          <div>
-            <a type="button" class="btn text-white btn-sm btn-secondary"
-              href="{{ url_for('settings', sbc=currend_sbc[0].id) }}">Настроить переадресацию</a>
-          </div>
+<div class="row p-3">
+    <div class="col"></div>
+    <div class="flex">
+        <h5 style="color:#6c757d;">Используется 2 из 1000 доступных портов</h5>
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0"
+                aria-valuemax="100">25%</div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
+<div class="row">
+    <div class="col">
+        <div class="jumbotron p-3">
+            {% if list_notactive_clients %}
+            <h5 style="color:#6c757d;">Подключены {{count_active_clients}} из {{count_all_clients}} клиентов</h5>
+            <h5 style="color:#6c757d;">Неактивные клиенты</h5>
+            <ul class="list-group list-group-flush overflow-auto" style="max-height: 200px;">
+                {% for sbc in list_notactive_clients%}
+                <a class="list_element list-group-item list-group-item-action" style="cursor: pointer"
+                    href="{{ url_for('index', sbc=sbc.id) }}">{{sbc.name}}</a>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col">
+        <div class="jumbotron p-3">
 
-<!-- <button type="button" class="btn btn-primary">Включить переадресацию</button> -->
-
-<!--<div class="table-responsive">
-  <table class="table table-sm table-bordered table-hover ">
-    <caption style="caption-side: top;"><h5>Передресация включена<h5></caption>
-      <thead class="thead-light">
-        <tr>
-          <th class="text-center">Порт назначения</th>        
-          <th class="text-center">Выделенный Порт </th>
-          <th class="text-center">Отключение</th>      
-        </tr>
-      </thead>
-      <tbody>  
-        <tr>
-          <td class="text-center">22</td>        
-          <td class="text-center">80239 </td>      
-          <td class="text-center">Закрыть</td>
-        </tr>  
-        <tr>
-          <td class="text-center">80</td>        
-          <td class="text-center">80249 </td>      
-          <td class="text-center">Закрыть</td>
-        </tr>  
-      </tbody>
-    </table>
-  </div>
-  <button type="button" class="btn btn-danger float-right">Выключить переадресацию</button>-->
-
-
-{% if sbc_ports %}
-<div class="table-responsive">
-  <table class="table table-sm table-bordered table-hover ">
-    <caption style="caption-side: top;">
-      <h5>Таблица переадресации<h5>
-    </caption>
-    <thead class="thead-light">
-      <tr>
-        <th class="text-center">Порт назначения</th>
-        <th class="text-center">Выделенный Порт </th>
-        <th class="text-center">Дата открытия</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for port in sbc_ports %}
-      <tr>
-        <td class="text-center">{% if port.destination_port %} {{port.destination_port}} {% endif %}</td>
-        <td class="text-center">{% if port.dedicated_port %} {{port.dedicated_port}} {% endif %}</td>
-        <td class="text-center">{% if port.date_open %} {{port.date_open}} {% endif %}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+            {% if list_sbc_with_active_forwarding %}
+            <h5 style="color:#6c757d;">Переадресация включена у {{ list_sbc_with_active_forwarding|length }} клиентов
+            </h5>
+            <ul class="list-group list-group-flush overflow-auto" style="max-height: 200px;"></ul>
+            {% for sbc in list_sbc_with_active_forwarding %}
+            <li class="list-group-item list-group-item-action">{{sbc.name}}</li>
+            {% endfor %}
+            </ul>
+            {% else %}
+            <h5 style="color:#6c757d;">Переадресация выключена</h5>
+            {% endif %}
+        </div>
+    </div>
 </div>
 
 
-{% endif %}
-
-
-
-<div class="table-responsive">
-  
-  <table class="table table-bordered table-hover ">
-    <caption style="caption-side: top;">
-      <h5>Журнал подключений<h5>
-    </caption>
-    <thead class="thead-light">
-      <tr>
-        <th class="text-center">Дата</th>
-        <th class="text-center">Реальный адрес</th>
-        <th class="text-center">Виртуальный адрес</th>
-        <th class="text-center">Тип подключения</th>
-      </tr>
-    </thead>
-    
-    <tbody>
-      {% for record in history.list%}
-      <tr>
-        <td class="text-center">{{record.date}}</td>
-        <td class="text-center">{{record.realAddress}}</td>
-        <td class="text-center">{{record.virtualAddress}}</td>
-        <td class="text-center">{{record.type}}</td>
-      </tr>
-      {% else %}
-      <tr>
-        <td colspan="4"><h5>Нет записей<h5></td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  
-</div>
-
-{% if not history.max_page %}
-<nav class="float-right" aria-label="Page navigation example">
-  <ul class="pagination">
-    <li class="page-item">
-      <form action="{{url_for('index', sbc=currend_sbc_id, page=history.page)}}" method="get">      
-        <button type="submit" class="btn btn-sm btn-link page-link">Загрузить еще</button>      
-    </form>
-    </li>    
-  </ul>
-</nav>
-{% endif %}
-
-{% endif %}
 
 {% endblock %}

@@ -5,7 +5,7 @@
 <!-- <button type="button" class="btn btn-primary">Включить переадресацию</button> -->
 <div class="container-fluid p-0">
     <div class="row">
-      <div class="col"><h3>Client1</h3></div>
+      <div class="col"><h3>{{current_sbc.name}}</h3></div>
       <div class="col">
         <div class="btn-group d-flex flex-row-reverse"  role="group" aria-label="open close all ports">          
           <div >
@@ -78,7 +78,7 @@
     </div>
     <div class="row mt-5">
       <div class="col">        
-          <button type="submit" class="btn btn-secondary float-right" onclick="location.href='{{url_for('index', sbc=currend_sbc_id)}}';">Назад</button>        
+          <button type="submit" class="btn btn-secondary float-right" onclick="location.href='{{url_for('index', sbc=current_sbc.id)}}';">Назад</button>        
       </div>
     </div>  
   </div>

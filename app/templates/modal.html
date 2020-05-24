@@ -3,12 +3,12 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Описание для {{currend_sbc[0].name}}</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Описание для {{current_sbc.name}}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ url_for('index', sbc=currend_sbc_id) }}" method="post">
+            <form action="{{ url_for('index', sbc=current_sbc.id) }}" method="post">
                 {{ forms.description.csrf_token }}	
                 <div class="modal-body">
                     <div class="form-group">

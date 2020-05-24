@@ -1,0 +1,150 @@
+{% extends '/base.html' %}
+
+{% block content %}
+
+
+
+<h3>{{ current_sbc.name }}</h3>
+
+<div class="row">
+  <div class="col">
+    <div class="jumbotron p-3">
+      <h5 style="color:#6c757d;">Описание</h5>
+      <p>
+        <pre>{{ current_sbc.description or "" }}</pre>
+        {% if current_sbc.description %}        
+        <button type="button" class="btn btn-link float-right" data-toggle="modal" data-target="#exampleModal">Редактировать</button>        
+        {% else %}
+        <button type="button" class="btn btn-link float-right" data-toggle="modal" data-target="#exampleModal"
+          data-whatever="@mdo">Добавить описание</button>
+        {% endif %}
+        {% include 'modal.html'%}
+        <br>
+      </p>
+    </div>
+  </div>
+  <div class="col">
+    <div class="jumbotron p-3">
+      <h5 style="color:#6c757d;">Текущее состояние</h5>
+      <div class="table-responsive">
+
+        <table class="table table-borderless table-sm">
+
+          <tbody>
+            <tr>
+              <td class="">Состояние:</td>
+              {% if current_sbc.connected  %}
+              <td><span class="badge badge-success">Подключен</span></td>
+              {% else %}
+              <td><span class="badge badge-danger">Отключен</span></td>
+              {% endif %}
+            </tr>
+            <tr>
+              <td class="">Реальный адрес:</td>
+              {% if current_sbc_status.realAddress %}
+              <td class="">{{current_sbc_status.realAddress}}</td>
+              {% else %}
+              <td class="">не определено</td>
+              {% endif %}
+            </tr>
+            <tr>
+              <td class="">Виртуальный адрес:</td>
+              {% if current_sbc_status.realAddress %}
+              <td class="">{{current_sbc_status.virtualAddress}}</td>
+              {% else %}
+              <td class="">не определено</td>
+              {% endif %}
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="btn-group d-flex flex-row-reverse" role="group" aria-label="Basic example">
+          <div>
+            <a type="button" class="btn text-white btn-sm btn-secondary"
+              href="{{ url_for('settings', sbc=current_sbc.id) }}">Настроить переадресацию</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% if sbc_ports %}
+<div class="table-responsive">
+  <table class="table table-sm table-bordered table-hover ">
+    <caption style="caption-side: top;">
+      <h5>Таблица переадресации<h5>
+    </caption>
+    <thead class="thead-light">
+      <tr>
+        <th class="text-center">Порт назначения</th>
+        <th class="text-center">Выделенный Порт </th>
+        <th class="text-center">Дата открытия</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for port in sbc_ports %}
+      <tr>
+        <td class="text-center">{% if port.destination_port %} {{port.destination_port}} {% endif %}</td>
+        <td class="text-center">{% if port.dedicated_port %} {{port.dedicated_port}} {% endif %}</td>
+        <td class="text-center">{% if port.date_open %} {{port.date_open}} {% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+
+
+<div class="table-responsive">
+  
+  <table class="table table-bordered table-hover ">
+    <caption style="caption-side: top;">
+      <h5>Журнал подключений<h5>
+    </caption>
+    <thead class="thead-light">
+      <tr>
+        <th class="text-center">№</th>
+        <th class="text-center">Дата</th>
+        <th class="text-center">Реальный адрес</th>
+        <th class="text-center">Виртуальный адрес</th>
+        <th class="text-center">Тип подключения</th>
+      </tr>
+    </thead>
+    
+    <tbody>
+      {% for record in history.list%}
+      <tr>        
+        <td class="text-center">{{loop.index}}</td>
+        <td class="text-center">{{record.date}}</td>
+        <td class="text-center">{{record.realAddress}}</td>
+        <td class="text-center">{{record.virtualAddress}}</td>
+        <td class="text-center">{{record.type}}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="4"><h5>Нет записей<h5></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+</div>
+
+{% if history.max_page %}
+<nav class="float-right" aria-label="Page navigation example">
+  <ul class="pagination">
+    <li class="page-item">
+      <form action="{{url_for('index', sbc=current_sbc.id, page=history.page)}}" method="get">      
+        <button type="submit" class="btn btn-sm btn-link page-link">Загрузить еще</button>      
+    </form>
+    </li>    
+  </ul>
+</nav>
+{% endif %}
+
+
+
+{% endblock %}

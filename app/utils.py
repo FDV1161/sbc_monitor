@@ -1,11 +1,10 @@
 import socket
 from .config import MIN_NUMBER_PORT, MAX_NUMBER_PORT, TIME_WAITING
 import subprocess
-from threading import Timer
-import time
+import signal
+import os
+import psutil
 
-
-from random import randint
 
 
 def search_free_port():
@@ -18,10 +17,9 @@ def search_free_port():
         try:
             sock.bind(('', port))
             sock.close()            
-            return randint(0, 4000)
+            return port
         except OSError:
             port += 1
-    # raise IOError('сould not find a free port')
     raise None
 
 
@@ -38,28 +36,10 @@ def start_port_forwarding(destination_address, destination_port, dedicated_port,
     process = subprocess.Popen(command)
 
 def stop_port_forwarding(pid):
-    # os.kill(pid, 9)
+    try:
+        process = psutil.Process(pid)
+        if process.name().lower() == 'redir':
+            os.kill(pid, signal.SIGKILL)
+    except:
+        pass
     return True 
-
-
-
-# Timer(timer_waiting, process.kill).start()
-# return process
-# def test():
-#     db.query(Ports.pid).filter_by(now-Ports.date_open >= Ports.date_close)
-
-# def do_something():
-#     print("I am sleping")
-
-
-# def thread_function():
-#     while True:
-#         do_something()
-#         time.sleep(30)
-
-# запуск
-# остановки
-# продления
-# from app.utils import thread_function
-# from threading import Thread
-# Thread(target=thread_function, daemon=True).start()

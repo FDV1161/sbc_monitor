@@ -1,8 +1,30 @@
-<nav class="col navbar navbar-light bg-primary">
-    <a class="navbar-brand" >SBC Monitor</a>
-    <button class="btn btn-link navbar-toggler d-lg-none collapsed" type="button" data-toggle="collapse"
-        data-target="#collapseOne" aria-controls="collapseOne" aria-expanded="false"
-        aria-label="Toggle docs navigation">
+<nav class="col navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="{{url_for('main')}}">SBCMonitor</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
-    </button>
+      </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('logout') }}">Пользователи</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('logout') }}">Выйти</a>
+            </li>
+            <li class="nav-item dropdown d-lg-none">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="collapse" data-target="#collapseListClients" aria-controls="collapseListClients" aria-expanded="false"
+                aria-label="collapse list clients">
+                    Список клиентов
+                </a>
+                <div class="collapse" id="collapseListClients">
+                    {% include 'sidebar.html' %}
+                </div>
+            </li>            
+        </ul>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('logout') }}">Выйти</a>
+            </li>
+        </ul>        
+    </div>
 </nav>

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, HiddenField, TextAreaField
+from wtforms import StringField, SubmitField, HiddenField, TextAreaField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, NumberRange
 from wtforms.fields.html5 import IntegerField
 
@@ -12,25 +12,9 @@ class AddPortForm(FlaskForm):
 
 class DescriptionForm(FlaskForm):
     text = TextAreaField()
-    
 
-
-
-class OpenAllPortForm(FlaskForm):
-    """
-    форма для открытия всех портов
-    """
-    sbc_number_oap = HiddenField()
-    submit = SubmitField('Закрыть')
-
-class CloseAllPortForm(FlaskForm):
-    """
-    форма для закрытия всех портов
-    """
-    sbc_number_cap = HiddenField()
-    submit = SubmitField('Закрыть')
-
-class tableForm(FlaskForm):
-    close_port = SubmitField('Закрыть')
-    open_port = SubmitField('Открыть')
-    del_port = SubmitField('Удалить')
+class LoginForm(FlaskForm):
+    username = StringField("Логин", validators=[InputRequired()])
+    password = PasswordField("Пароль", validators=[InputRequired()])
+    remember = BooleanField("Запомнить меня")
+    submit = SubmitField("Войти")
