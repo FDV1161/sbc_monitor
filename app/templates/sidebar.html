@@ -1,15 +1,13 @@
 <nav class="navbar bg-light p-0 overflow-auto">
-  <input class="form-control mt-3 mb-3 search_sbc" type="search" placeholder="Search" aria-label="Search" onsearch="search_sbc()"
-    onkeyup="search_sbc()" id="search_sbc">
+  <input class="form-control mt-3 mb-3 search_sbc" type="search" placeholder="Search" aria-label="Search"
+    onsearch="search_sbc()" onkeyup="search_sbc()" id="search_sbc">
   <ul class="list-group list-group-flush list-group flex-column w-100" id="sidebar_list">
-
     {% for sbc in list_sbc_status %}
     {% if current_sbc is defined %}
     {% if sbc.id == current_sbc.id %}
     {% set action = 'active' %}
     {% endif %}
     {% endif %}
-
     <a class="list_element list-group-item list-group-item-action {{ action }}" style="cursor: pointer"
       href="{{ url_for('index', sbc=sbc.id) }}">
       <div class="d-flex justify-content-between align-items-center">

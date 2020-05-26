@@ -1,97 +1,88 @@
 {% extends '/base.html' %}
-
 {% block content %}
-
-<!-- <button type="button" class="btn btn-primary">Включить переадресацию</button> -->
 <div class="container-fluid p-0">
-    <div class="row">
-      <div class="col"><h3>{{current_sbc.name}}</h3></div>
-      <div class="col">
-        <div class="btn-group d-flex flex-row-reverse"  role="group" aria-label="open close all ports">          
-          <div >
-            {% include '/forms/close_all_port.html' %}
-          </div>
-          <div class="pr-1">          
+  <div class="row">
+    <div class="col">
+      <h3>{{current_sbc.name}}</h3>
+    </div>
+    <div class="col">
+      <div class="btn-group d-flex flex-row-reverse" role="group" aria-label="open close all ports">
+        <div>
+          {% include '/forms/close_all_port.html' %}
+        </div>
+        <div class="pr-1">
           {% include '/forms/open_all_port.html' %}
-          </div>
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col">
-        <div class="table-responsive">
-          <table class="table table-sm table-bordered table-hover ">
-            <caption style="caption-side: top;"><h5>Передресация<h5></caption>
-              <thead class="thead-light">
-                <tr>                  
-                  <th class="text-center">Порт назначения</th>        
-                  <th class="text-center">Выделенный Порт </th>
-                  <th class="text-center">Дата открытия</th>
-                  <th class="text-center">Время жизни</th>                       
-                  <th class="text-center" colspan="3">Управление</th>      
-                </tr>
-              </thead>
-              <tbody>  
-                {% for port in sbc_ports %}
-                <tr>                  
-                  <td class="text-center">{{port.destination_port}}</td>        
-                  <td class="text-center">
-                    {% if port.dedicated_port %}
-                      {{ port.dedicated_port }}
-                    {% endif %}
-                  </td>
-                  <td class="text-center">
-                    {% if port.date_open%}
-                      {{port.date_open.strftime("%d.%m.%Y %H:%M")}}
-                    {% endif %}
-                  </td>
-                  <td class="text-center">
-                    {% if port.time_live %}                      
-                        {{port.time_live}} мин
-                    {% endif %}
-                  </td>                  
-                  <td class="text-center">
-                    {% include '/forms/delete_port.html' %}
-                  </td>
-                  <td class="text-center">
-                    {% if port.date_open or port.dedicated_port %}
-                      {% include '/forms/close_port.html' %}  
-                    {% else %}
-                      {% include '/forms/open_port.html' %}                    
-                    {% endif %}
-                  </td>
-                  <td class="text-center">                    
-                    <form action="{{url_for('extend_time', sbc=current_sbc.id, port_id=port.id)}}" method="get">
-                      <button type="submit" class="btn btn-sm btn-link">Продлить</button>
-                    </form>
-                  </td>
-                  <!-- </form> -->
-                </tr>  
-                
-                {% endfor %}
-              </tbody>
-            </table>
-        </div>  
-      </div>    
-    </div>
-    <div class="row">
-      <div class="col">
-        {% include '/forms/add_port.html' %}  
-      </div>
-    </div>
-    <div class="row mt-5">
-      <div class="col">        
-          <button type="submit" class="btn btn-secondary float-right" onclick="location.href='{{url_for('index', sbc=current_sbc.id)}}';">Назад</button>        
-      </div>
-    </div>  
   </div>
-  
-  
-  {% endblock %}
-  
-  
-  
-  
-  
-  
-  
+  <div class="row">
+    <div class="col">
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered table-hover ">
+          <caption style="caption-side: top;">
+            <h5>Передресация<h5>
+          </caption>
+          <thead class="thead-light">
+            <tr>
+              <th class="text-center">Порт назначения</th>
+              <th class="text-center">Выделенный Порт </th>
+              <th class="text-center">Дата открытия</th>
+              <th class="text-center">Время жизни</th>
+              <th class="text-center" colspan="3">Управление</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for port in sbc_ports %}
+            <tr>
+              <td class="text-center">{{port.destination_port}}</td>
+              <td class="text-center">
+                {% if port.dedicated_port %}
+                {{ port.dedicated_port }}
+                {% endif %}
+              </td>
+              <td class="text-center">
+                {% if port.date_open%}
+                {{port.date_open.strftime("%d.%m.%Y %H:%M")}}
+                {% endif %}
+              </td>
+              <td class="text-center">
+                {% if port.time_live %}
+                {{port.time_live}} мин
+                {% endif %}
+              </td>
+              <td class="text-center">
+                {% include '/forms/delete_port.html' %}
+              </td>
+              <td class="text-center">
+                {% if port.date_open or port.dedicated_port %}
+                {% include '/forms/close_port.html' %}
+                {% else %}
+                {% include '/forms/open_port.html' %}
+                {% endif %}
+              </td>
+              <td class="text-center">
+                <form action="{{url_for('extend_time', sbc=current_sbc.id, port_id=port.id)}}" method="get">
+                  <button type="submit" class="btn btn-sm btn-link">Продлить</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      {% include '/forms/add_port.html' %}
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col">
+      <button type="submit" class="btn btn-secondary float-right"
+        onclick="location.href='{{url_for('index', sbc=current_sbc.id)}}';">Назад</button>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,6 +1,5 @@
 {% extends '/base.html' %}
 {% block content %}
-
 <div class="row">
     <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
         <div class="jumbotron p-3">
@@ -8,20 +7,14 @@
                 {{create_user_form.csrf_token}}
                 <h3>Добавить пользователя</h3>
                 <div class="form-group">
-                    <!-- <label for="formGroupExampleInput">Example label</label> -->
-                    <!-- <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input"> -->
                     {{create_user_form.username.label}}
                     {{create_user_form.username(class="form-control")}}
                 </div>
                 <div class="form-group">
-                    <!-- <label for="formGroupExampleInput2">Another label</label>
-                    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Another input"> -->
                     {{create_user_form.password.label}}
                     {{create_user_form.password(class="form-control")}}
                 </div>
                 <div class="form-group">
-                    <!-- <label for="formGroupExampleInput2">Another label</label>
-                    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Another input"> -->
                     {{create_user_form.second_password.label}}
                     {{create_user_form.second_password(class="form-control")}}
                 </div>
@@ -33,19 +26,19 @@
         <div class="table-responsive">
             <table class="table table-bordered table-hover ">
                 <thead class="thead-light">
-                    <tr>                        
+                    <tr>
                         <th class="text-center">Пользователь</th>
                         <th class="text-center">Удалить</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for user in list_users %}
-                    <tr>                        
+                    <tr>
                         <td class="text-center">{{user.username}}</td>
                         <td class="text-center">
-                            <form action="{{url_for('delete_user', user_id=user.id)}}">                                    
+                            <form action="{{url_for('delete_user', user_id=user.id)}}">
                                 <button type="submit" class="btn btn-sm btn-link">Удалить</button>
-                            </form>                            
+                            </form>
                         </td>
                     </tr>
                     {% endfor %}
@@ -54,7 +47,4 @@
         </div>
     </div>
 </div>
-
-
-
 {% endblock %}

@@ -31,9 +31,10 @@ def login():
         return redirect(url_for('main'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = db.session.query(User).filter(User.username == form.username.data).first()
+        user = db.session.query(User).filter(
+            User.username == form.username.data).first()
         if user and user.check_password(form.password.data):
-            login_user(user, remember=form.remember.data)            
+            login_user(user, remember=form.remember.data)
             return redirect(url_for('main'))
         flash("Неверный логин или пароль.", 'error')
         return render_template('login.html', form=form)
@@ -43,29 +44,31 @@ def login():
 @app.route('/logout/')
 @login_required
 def logout():
-    logout_user()    
+    logout_user()
     return redirect(url_for('login'))
 
 
 @app.route("/", methods=['POST', 'GET'])
 @login_required
-def main():    
+def main():
     list_sbc_status = Sbc.query.all()
-    list_sbc_with_active_forwarding = db.session.query(Sbc).outerjoin(Forwarding).filter(Forwarding.pid != None).all()    
-    list_notactive_clients = Sbc.query.filter(or_(Sbc.connected==False, Sbc.connected==None)).all()
-    count_active_clients = Sbc.query.filter(Sbc.connected==True).count()
-    count_all_clients = Sbc.query.count()    
-    
-    return render_template('contents/main.html', list_sbc_status=list_sbc_status, 
-        list_sbc_with_active_forwarding=list_sbc_with_active_forwarding, 
-        list_notactive_clients=list_notactive_clients, count_active_clients=count_active_clients, count_all_clients=count_all_clients)
+    list_sbc_with_active_forwarding = db.session.query(Sbc).outerjoin(
+        Forwarding).filter(Forwarding.pid != None).all()
+    list_notactive_clients = Sbc.query.filter(
+        or_(Sbc.connected == False, Sbc.connected == None)).all()
+    count_active_clients = Sbc.query.filter(Sbc.connected == True).count()
+    count_all_clients = Sbc.query.count()
+
+    return render_template('contents/main.html', list_sbc_status=list_sbc_status,
+                           list_sbc_with_active_forwarding=list_sbc_with_active_forwarding,
+                           list_notactive_clients=list_notactive_clients, count_active_clients=count_active_clients, count_all_clients=count_all_clients)
 
 
 @app.route("/<int:sbc>", methods=['POST', 'GET'])
 @app.route("/<int:sbc>/history/<int:page>", methods=['POST', 'GET'])
 @login_required
-def index(sbc, page=1):	
-    
+def index(sbc, page=1):
+
     if page <= 0:
         abort(404)
 
@@ -73,30 +76,31 @@ def index(sbc, page=1):
     if not current_sbc:
         abort(404)
 
-	# обновление описания
+        # обновление описания
     descriptionForm = DescriptionForm()
     if descriptionForm.validate_on_submit():
         update_description(sbc, descriptionForm.text.data)
         return redirect(url_for('index', sbc=sbc))
     descriptionForm.text.data = current_sbc.description
-        
+
     # поиск информации о текущем состоянии рассматриваемого ок
     max_date = db.session.query(func.max(Logs.date)).filter(Logs.sbc_id == sbc)
-    current_sbc_status = Logs.query.filter(and_(Logs.sbc_id==sbc, Logs.date==max_date)).first()
+    current_sbc_status = Logs.query.filter(
+        and_(Logs.sbc_id == sbc, Logs.date == max_date)).first()
     # поиск информации о текущем состоянии всех одноплатника
     list_sbc_status = Sbc.query.all()
     # поиск информации о переадресации портов для ок
     sbc_ports = Forwarding.query.filter_by(sbc_id=sbc).all()
-    
+
     # количество логов
-    count_logs = Logs.query.filter(Logs.sbc_id == sbc).count()    
+    count_logs = Logs.query.filter(Logs.sbc_id == sbc).count()
     history = {
         'list': Logs.query.order_by(Logs.date.desc()).filter(Logs.sbc_id == sbc).limit(10 * page),
         'page': page + 1,
         'max_page': False if count_logs / (page * 10) <= 1 else True,
         'count': count_logs
-    }    
-    forms = {'description': descriptionForm}	
+    }
+    forms = {'description': descriptionForm}
     return render_template('contents/sbc.html', list_sbc_status=list_sbc_status, current_sbc=current_sbc, current_sbc_status=current_sbc_status, sbc_ports=sbc_ports, history=history, forms=forms, sum_date_with_minutes=sum_date_with_minutes)
 
 
@@ -114,7 +118,7 @@ def settings(sbc):
     if addPortForm.validate_on_submit():
         add_port(addPortForm.number_ap.data, sbc)
         return redirect(url_for('settings', sbc=sbc))
-    # поиск информации о текущем состоянии каждого одноплатника    
+    # поиск информации о текущем состоянии каждого одноплатника
     list_sbc_status = Sbc.query.all()
     sbc_ports = Forwarding.query.filter_by(sbc_id=sbc).all()
     forms = {'addPort': addPortForm}
@@ -131,19 +135,20 @@ def open_port(sbc, port_id):
     dest_port = Forwarding.query.get(port_id)
     if not dest_port:
         flash('Не удалось открыть порт. Порте не найден', 'error')
-        return redirect(url_for('settings', sbc=sbc))    
+        return redirect(url_for('settings', sbc=sbc))
     # ищем адрес назначения
-    last_date = db.session.query(func.max(Logs.date)).filter_by(sbc_id=sbc)    
+    last_date = db.session.query(func.max(Logs.date)).filter_by(sbc_id=sbc)
     dest_address = db.session.query(Logs.virtualAddress).filter_by(
         sbc_id=sbc, date=last_date).first()
     if not dest_address:
         flash('Не удалось открыть порт. Не найден адрес клиента', 'error')
-        return redirect(url_for('settings', sbc=sbc))    
+        return redirect(url_for('settings', sbc=sbc))
     # выделяем порт
     dedicated_port = search_free_port()
     if dedicated_port:
         # запускаем переадресацию
-        # process =  start_port_forwarding(dest_address[0], dest_port.destination_port, dedicated_port)
+        process = start_port_forwarding(
+            dest_address[0], dest_port.destination_port, dedicated_port)
         # обновляем записи в бд
         dest_port.date_open = datetime.now()
         dest_port.dedicated_port = dedicated_port
@@ -154,9 +159,9 @@ def open_port(sbc, port_id):
             db.session.commit()
         except:
             db.session.rollback()
-            # process.kill()
+            process.kill()
             flash('Не удалось открыть порт', 'error')
-    else:        
+    else:
         flash('Не удалось открыть порт. Все порты заняты', 'error')
     return redirect(url_for('settings', sbc=sbc))
 
@@ -164,7 +169,7 @@ def open_port(sbc, port_id):
 @app.route("/extend_time/<int:sbc>/<int:port_id>")
 @login_required
 def extend_time(sbc, port_id):
-    forwarding = Forwarding.query.filter_by(sbc_id=sbc, id=port_id).first()    
+    forwarding = Forwarding.query.filter_by(sbc_id=sbc, id=port_id).first()
     if not forwarding:
         abort(404)
     if forwarding.pid:
@@ -177,7 +182,6 @@ def extend_time(sbc, port_id):
             db.session.rollback()
     flash('Не удалось продлить время', 'error')
     return redirect(url_for('settings', sbc=sbc))
-    
 
 
 @app.route("/open_all_ports/<int:sbc>")
@@ -189,7 +193,7 @@ def open_all_port(sbc):
         sbc_id=sbc, date=last_date).first()
     if not dest_address:
         flash('Не удалось открыть порт. Не найден адрес клиента', 'error')
-        return redirect(url_for('settings', sbc=sbc))    
+        return redirect(url_for('settings', sbc=sbc))
     # ищем порты для переадресации
     forwardings = Forwarding.query.filter_by(sbc_id=sbc).all()
     for forwarding in forwardings:
@@ -199,7 +203,8 @@ def open_all_port(sbc):
         # выделяем порт
         dedicated_port = search_free_port()
         if dedicated_port:
-            # process =  start_port_forwarding(dest_address[0], dest_port.destination_port, dedicated_port)
+            process = start_port_forwarding(
+                dest_address[0], dest_port.destination_port, dedicated_port)
             forwarding.date_open = datetime.now()
             forwarding.dedicated_port = dedicated_port
             forwarding.time_live = TIME_WAITING
@@ -208,11 +213,11 @@ def open_all_port(sbc):
             try:
                 db.session.commit()
             except:
+                process.kill()
                 db.session.rollback()
         else:
             flash('Не удалось открыть порт № {}'.format(
                 forwarding.destination_port))
-
     return redirect(url_for('settings', sbc=sbc))
 
 
@@ -251,7 +256,7 @@ def close_all_port(sbc):
             db.session.add(forwarding)
             db.session.commit()
         except:
-            db.session.rollback()        
+            db.session.rollback()
             flash('Не удалось закрыть порт')
     return redirect(url_for('settings', sbc=sbc))
 
@@ -274,12 +279,6 @@ def delete_port(sbc, port_id):
     return redirect(url_for('settings', sbc=sbc))
 
 
-@app.route("/clients/")
-@login_required
-def client_managment():
-    return render_template('contents/client_managment.html')
-
-
 @app.route("/users/", methods=['post', 'get'])
 @login_required
 def user_managment():
@@ -296,8 +295,8 @@ def user_managment():
                 flash("Не удалось создать клиента")
     list_users = User.query.all()
     list_sbc_status = Sbc.query.all()
-
     return render_template('contents/user_managment.html', list_sbc_status=list_sbc_status, list_users=list_users, create_user_form=create_user_form)
+
 
 @app.route("/delete_user/<int:user_id>")
 @login_required
@@ -305,7 +304,7 @@ def delete_user(user_id):
     if User.query.count() <= 1:
         flash("Не удалось удалить пользователя. Нельзя удалить последнего пользователя", 'error')
         return redirect(url_for('user_managment'))
-    user = User.query.get(user_id)    
+    user = User.query.get(user_id)
     try:
         db.session.delete(user)
         db.session.commit()
@@ -319,7 +318,7 @@ def delete_user(user_id):
 @app.route("/delete_client/<int:sbc_id>")
 @login_required
 def delete_client(sbc_id):
-    sbc = Sbc.query.get(sbc_id)    
+    sbc = Sbc.query.get(sbc_id)
     try:
         db.session.delete(sbc)
         db.session.commit()
@@ -328,7 +327,8 @@ def delete_client(sbc_id):
         flash("Не удалось удалить клиента")
         return redirect(url_for('index', sbc=sbc_id))
     return redirect(url_for('main'))
-    
+
+
 @app.route("/clear_logs/<int:sbc_id>")
 @login_required
 def clear_logs(sbc_id):
@@ -341,36 +341,14 @@ def clear_logs(sbc_id):
     return redirect(url_for('index', sbc=sbc_id))
 
 
-# @app.route("/delete_client/<int:id>")
-# @login_required
-# def create_user():    
-#     create_user_form = CreateUserForm()
-#     if create_user_form.validate_on_submit():
-#         if create_user_form.password.data == create_user_form.second_password.data:
-#             user = User(username=create_user_form.username.data)
-#             user.set_password(create_user_form.password.data)
-#             try:
-#                 db.session.add(user)
-#                 db.session.commit()
-#             except:
-#                 db.session.rollback()
-#                 flash("Не удалось создать клиента")        
-#     return redirect(url_for('index', sbc=sbc))
-
-
-
-
-
-
-
 def add_port(port, sbc):
     """
     Добавление номера порта к списку открываемых портов для sbc одноплатника
-    """        
+    """
     if db.session.query(Forwarding.id).filter_by(sbc_id=sbc, destination_port=port).count():
         flash("Порт уже добавлен", 'error')
         return redirect(url_for('settings', sbc=sbc))
-        
+
     port = Forwarding(destination_port=port, sbc_id=sbc)
     db.session.add(port)
     try:

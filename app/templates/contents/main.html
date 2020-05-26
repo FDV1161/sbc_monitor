@@ -20,15 +20,13 @@
     </div>
     <div class="col">
         <div class="jumbotron p-3">
-
             {% if list_sbc_with_active_forwarding %}
             <h5 style="color:#6c757d;">Переадресация включена у {{ list_sbc_with_active_forwarding|length }} клиентов
             </h5>
             <ul class="list-group list-group-flush overflow-auto" style="max-height: 200px;"></ul>
             {% for sbc in list_sbc_with_active_forwarding %}
-            
             <a class="list_element list-group-item list-group-item-action" style="cursor: pointer"
-                    href="{{ url_for('index', sbc=sbc.id) }}">{{sbc.name}}</a>
+                href="{{ url_for('index', sbc=sbc.id) }}">{{sbc.name}}</a>
             {% endfor %}
             </ul>
             {% else %}

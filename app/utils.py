@@ -50,5 +50,3 @@ def stop_port_forwarding(pid):
             os.kill(pid, signal.SIGKILL)
     except:
         pass
-    
-

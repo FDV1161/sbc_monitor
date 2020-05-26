@@ -1,15 +1,11 @@
-<!-- форма для добавления номера порта к списку открываемых портов -->
-
 <form action="{{ url_for('settings', sbc=current_sbc.id) }}" method="post">
-	{{ forms.addPort.csrf_token }}	
+	{{ forms.addPort.csrf_token }}
 	<div class="form-row">
-	  <div class="col col-sm-6 col-md-3 col-xl-2">
-	    {{ forms.addPort.number_ap(class="form-control") }}
-	  </div>
-	  <div class="col">
-	    <!-- <button type="submit" class="btn btn-primary mb-2">Добавить</button> -->
-	    {{ forms.addPort.submit(class="btn btn-primary mb-2") }}
-	  </div>
+		<div class="col col-sm-6 col-md-3 col-xl-2">
+			{{ forms.addPort.number_ap(class="form-control") }}
+		</div>
+		<div class="col">
+			{{ forms.addPort.submit(class="btn btn-primary mb-2") }}
+		</div>
 	</div>
 </form>
-

@@ -14,7 +14,6 @@ function search_sbc() {
         }
     }
 }
-
 function search_sbc_2() {
     // Функция поиска одноплатника по ключевым символам из списка одноплатников
     var input, filter, li, a, i, txtValue;

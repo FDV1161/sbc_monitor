@@ -12,7 +12,8 @@ class User(db.Model, UserMixin):
     # email = db.Column(db.String(100), nullable=False, unique=True)
     password_hash = db.Column(db.String(100), nullable=False)
     created_on = db.Column(db.DateTime(), default=datetime.utcnow)
-    updated_on = db.Column(db.DateTime(), default=datetime.utcnow,  onupdate=datetime.utcnow)
+    updated_on = db.Column(
+        db.DateTime(), default=datetime.utcnow,  onupdate=datetime.utcnow)
 
     def __repr__(self):
         return "<{}:{}>".format(self.id, self.username)
@@ -30,8 +31,10 @@ class Sbc(db.Model):
     name = db.Column(db.String(255), nullable=False)
     connected = db.Column(db.Boolean)
     description = db.Column(db.Text)
-    logs = db.relationship('Logs', cascade="all, delete", backref=db.backref('logs', lazy=True))
-    forwarding = db.relationship('Forwarding', cascade="all, delete", backref=db.backref('forwarding', lazy=True))
+    logs = db.relationship('Logs', cascade="all, delete",
+                           backref=db.backref('logs', lazy=True))
+    forwarding = db.relationship(
+        'Forwarding', cascade="all, delete", backref=db.backref('forwarding', lazy=True))
 
 
 class Logs(db.Model):
@@ -42,37 +45,14 @@ class Logs(db.Model):
     realAddress = db.Column(db.String(39), nullable=False)
     virtualAddress = db.Column(db.String(39), nullable=False)
     sbc_id = db.Column(db.Integer, db.ForeignKey('sbc.id'), nullable=False)
-    
 
-# Forwarding
 
 class Forwarding(db.Model):
     __tablename__ = 'forwarding'
     id = db.Column(db.Integer, primary_key=True)
     date_open = db.Column(db.DateTime, nullable=True)
     destination_port = db.Column(db.Integer, nullable=False)
-    dedicated_port = db.Column(db.Integer, nullable=True) # nullable = True
+    dedicated_port = db.Column(db.Integer, nullable=True)  # nullable = True
     sbc_id = db.Column(db.Integer, db.ForeignKey('sbc.id'), nullable=False)
-    
     time_live = db.Column(db.Integer, nullable=True)
     pid = db.Column(db.Integer, nullable=True)
-
-
-
-# class Sbc(object):
-# 	pass
-# def loadSession():
-# 	engine = create_engine('mysql+pymysql://root:root@localhost:8080/test', echo=True)
-# 	metadata = MetaData(engine)
-# 	sbc_eng = Table('sbc', metadata,
-# 		Column('id', Integer, primary_key=True),
-# 		Column('name', String(255)),
-# 		Column('description', Text)
-# 	)
-# 	mapper(Sbc, sbc_eng)
-# 	Session = sessionmaker(bind=engine)
-# 	session = Session()
-# 	return session
-
-
-# id = db.Column(db.Integer, primary_key=True)
