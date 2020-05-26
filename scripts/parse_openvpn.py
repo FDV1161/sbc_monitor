@@ -3,7 +3,7 @@
 import pymysql
 import os
 from datetime import datetime
-from config import username, password, host, port, bd, charset
+from config import username, password, host, port, db, charset
 
 
 def query_get_sbc(name):
@@ -26,13 +26,12 @@ def query_new_sbc(name, connected):
     return "INSERT INTO sbc (name, connected) VALUES ('{}', '{}')".format(name, connected)
 
 
-connection = pymysql.connect(
+connect = pymysql.connect(
     host=host,
     user=username,
     password=password,
     db=db,
     charset=charset,
-    cursorclass=pymysql.cursors.DictCursor,
     port=int(port)
 )
 
@@ -50,13 +49,13 @@ cur.execute(query_get_sbc(common_name))
 if cur.rowcount:
     # если запись найдена, заносим информацию в таблицу лог
     id = cur.fetchone()[0]
-    connected = True if script_type == 'connect' else False
+    connected = 1 if script_type == 'connect' else 0
     cur.execute(query_update_connected(connected, id))
     cur.execute(query_insert_log(id, connect_time,
                                  script_type, real_address, virtual_address))
     connect.commit()
 else:
-    connected = True if script_type == 'connect' else False
+    connected = 1 if script_type == 'connect' else 0
     cur.execute(query_new_sbc(common_name, connected))
     # получаем id последней вставленной записи и заносим информацию в таблицу лог
     cur.execute('SELECT LAST_INSERT_ID()')

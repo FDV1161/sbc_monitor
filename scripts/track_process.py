@@ -14,10 +14,10 @@ def stop_port_forwarding(pid):
     try:
         process = psutil.Process(pid)
         if process.name().lower() == 'redir':
-            os.kill(pid, signal.SIGKILL)
+            process.terminate()
     except:
         pass
-    return True
+
 
 
 def query_track_forwarding():

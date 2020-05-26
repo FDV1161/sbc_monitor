@@ -35,9 +35,11 @@ def start_port_forwarding(destination_address, destination_port, dedicated_port,
         "redir",
         "--lport={}".format(dedicated_port),
         "--cport={}".format(destination_port),
-        "--caddr={}".format(destination_address)
+        "--caddr={}".format(destination_address),
+        "--timeout=60"
     ]
     process = subprocess.Popen(command)
+    return process
 
 
 def stop_port_forwarding(pid):
@@ -47,6 +49,6 @@ def stop_port_forwarding(pid):
     try:
         process = psutil.Process(pid)
         if process.name().lower() == 'redir':
-            os.kill(pid, signal.SIGKILL)
+            process.terminate()
     except:
         pass

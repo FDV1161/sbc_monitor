@@ -153,7 +153,7 @@ def open_port(sbc, port_id):
         dest_port.date_open = datetime.now()
         dest_port.dedicated_port = dedicated_port
         dest_port.time_live = TIME_WAITING
-        dest_port.pid = 112
+        dest_port.pid = process.pid
         try:
             db.session.add(dest_port)
             db.session.commit()
@@ -208,7 +208,7 @@ def open_all_port(sbc):
             forwarding.date_open = datetime.now()
             forwarding.dedicated_port = dedicated_port
             forwarding.time_live = TIME_WAITING
-            forwarding.pid = 112
+            forwarding.pid = process.pid
             db.session.add(forwarding)
             try:
                 db.session.commit()

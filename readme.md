@@ -23,7 +23,11 @@ pip3 install -r requirements.txt # установка зависимостей
 
 ## Создание базы данных
 
-Необходимо создать базу данных и прописать ее в файлах отредактировать файл `app/cofig.py` и `scripts/cofig.py`  
+Необходимо создать базу данных:  
+```text
+create database test default character set utf8 default collate utf8_general_ci;
+```
+и отредактировать файл `app/cofig.py` и `scripts/cofig.py`  
 Находясь в папке проекта с активным виртуальным окружением запустить консоль python3 и выполнить следующие команды:
 
 ```text
@@ -31,6 +35,19 @@ from app import database
 database.create_all()
 database.session.commit()
 ```
+
+## Добавление пользователя
+
+Для добавления пользователя необходимо зайти в консоль python3 и выполнить команды: 
+```text
+from app import database as db
+from app.models import User
+user = User(username="name")
+db.session.add(user)
+db.session.commit()
+```
+
+
 
 ## Настройка openvpn
 
@@ -47,6 +64,8 @@ client-disconnect "project/venv/bin/python3" "project/scripts/parse_openvpn.py"
 client-connect "project/venv/bin/python3" "project/scripts/parse_openvpn.py"
 ```
 
+Перезапустить сервис: `service openvpn restart`
+
 ## Настройка apache и mod_wsgi
 
 Для работы с apache используется модель mod_wsgi. Для его установки используется команда:
@@ -55,22 +74,30 @@ client-connect "project/venv/bin/python3" "project/scripts/parse_openvpn.py"
 sudo apt-get install libapache2-mod-wsgi
 ```
 
-После его установки необходимо настроить виртуальный хост apache. Для этого в папке `/etc/apache2/sites-available/` необходимо создавть файл `sbc_monitor.conf` со следующим содержанием:
+После его установки необходимо настроить виртуальный хост apache. Для этого в папке `/etc/apache2/sites-available/` необходимо создать файл `sbc_monitor.conf` со следующим содержанием:
 
 ```text
+Listen 80
 <VirtualHost *:80>
     ServerName 192.168.31.198
-    WSGIDaemonProcess sbc user=dmitriy group=dmitriy threads=5
-    WSGIScriptAlias / /var/www/sbc/sbc.wsgi
-    <Directory /var/www/sbc>
-        WSGIProcessGroup sbc
+    WSGIDaemonProcess sbc_monitor user=dmitriy group=dmitriy threads=5
+    WSGIScriptAlias / /var/www/sbc_monitor/sbc_monitor.wsgi
+    <Directory /var/www/sbc_monitor>
+        WSGIProcessGroup sbc_monitor
         WSGIApplicationGroup %{GLOBAL}
         Order deny,allow
         Allow from all
         Require all granted
     </Directory>
-    ErrorLog /var/www/sbc/error.log
+    ErrorLog /var/www/sbc_monitor/error.log
 </VirtualHost>
+
+```
+В файле sbc_monitor.wsgi уставить путь до папки проекта и до интерпритатора python3: 
+
+```text
+#! /var/www/sbc_monitor/venv/bin/python3
+project_folder = '/var/www/sbc_monitor'
 ```
 
 После чего необходимо включить виртуальный хост:
@@ -92,4 +119,10 @@ service apache2 restart
 
 ```text
 sudo iptables -I INPUT -p tcp --dport MIN_VALUE_PORT:MAX_VALUE_PORT -j ACCEPT
+```
+
+## Переадресация
+Для закрытия переадресации по времени необходимо в планировщик cron добавить: 
+```text
+*/10 * * * * /var/www/sbc_monitor/venv/bin/python3 /var/www/sbc_monitor/scripts/track_process.py
 ```
