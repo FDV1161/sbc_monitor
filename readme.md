@@ -93,32 +93,3 @@ service apache2 restart
 ```text
 sudo iptables -I INPUT -p tcp --dport MIN_VALUE_PORT:MAX_VALUE_PORT -j ACCEPT
 ```
-
-Включения виртуальн хост sudo a2ensite test.com.conf
-Перезапустить apache service apache2 reload  /etc/init.d/apache2 restart
-https://flask.palletsprojects.com/en/1.1.x/deploying/mod_wsgi/
-подробнее на https://flask-russian-docs.readthedocs.io/ru/latest/deploying/mod_wsgi.html
-
-Открытие портов: 
-sudo iptables -I INPUT -p tcp --dport 5000 -j ACCEPT
-sudo iptables -I INPUT -p tcp --dport 4000:4999 -j ACCEPT
-
-
-
-
-
-<VirtualHost *:80>
-     # Add machine's IP address (use ifconfig command)
-     ServerName 192.168.31.198
-     # Give an alias to to start your website url with
-     WSGIScriptAlias / /home/dmitriy/testap/app.wsgi
-     <Directory /home/dmitriy/testap/>
-                # set permissions as per apache2.conf file
-            Options FollowSymLinks
-            AllowOverride None
-            Require all granted
-     </Directory>
-      ErrorLog ${APACHE_LOG_DIR}/error.log
-      LogLevel warn
-      CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
