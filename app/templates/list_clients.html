@@ -1,0 +1,30 @@
+<nav class="navbar bg-light p-0 overflow-auto">
+    <input class="form-control mt-3 mb-3" type="search" placeholder="Search" aria-label="Search"
+        onsearch="search_sbc_2()" onkeyup="search_sbc_2()" id="search_sbc2">
+    <ul class="list-group list-group-flush list-group flex-column w-100" id="sidebar_list2">
+
+        {% for sbc in list_sbc_status %}
+        {% if current_sbc is defined %}
+        {% if sbc.id == current_sbc.id %}
+        {% set action = 'active' %}
+        {% endif %}
+        {% endif %}
+
+        <a class="list_element list-group-item list-group-item-action {{ action }}" style="cursor: pointer"
+            href="{{ url_for('index', sbc=sbc.id) }}">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>{{ sbc.name }}</div>
+                {% if sbc.connected %}
+                <span class="badge badge-success badge-pill">
+                    <i class="fas fa-power-off"></i>
+                </span>
+                {% else %}
+                <span class="badge badge-danger badge-pill">
+                    <i class="fas fa-power-off"></i>
+                </span>
+                {% endif %}
+            </div>
+        </a>
+        {% endfor %}
+    </ul>
+</nav>

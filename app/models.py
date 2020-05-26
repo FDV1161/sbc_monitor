@@ -30,6 +30,8 @@ class Sbc(db.Model):
     name = db.Column(db.String(255), nullable=False)
     connected = db.Column(db.Boolean)
     description = db.Column(db.Text)
+    logs = db.relationship('Logs', cascade="all, delete", backref=db.backref('logs', lazy=True))
+    forwarding = db.relationship('Forwarding', cascade="all, delete", backref=db.backref('forwarding', lazy=True))
 
 
 class Logs(db.Model):
@@ -40,7 +42,7 @@ class Logs(db.Model):
     realAddress = db.Column(db.String(39), nullable=False)
     virtualAddress = db.Column(db.String(39), nullable=False)
     sbc_id = db.Column(db.Integer, db.ForeignKey('sbc.id'), nullable=False)
-    sbc = db.relationship('Sbc', backref=db.backref('logs', lazy=True))
+    
 
 # Forwarding
 
@@ -51,7 +53,7 @@ class Forwarding(db.Model):
     destination_port = db.Column(db.Integer, nullable=False)
     dedicated_port = db.Column(db.Integer, nullable=True) # nullable = True
     sbc_id = db.Column(db.Integer, db.ForeignKey('sbc.id'), nullable=False)
-    sbc = db.relationship('Sbc', backref=db.backref('forwarding', lazy=True))
+    
     time_live = db.Column(db.Integer, nullable=True)
     pid = db.Column(db.Integer, nullable=True)
 

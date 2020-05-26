@@ -4,11 +4,14 @@ MAX_NUMBER_PORT = 4999
 # время ожидание перед закрытием порта в секундах
 TIME_WAITING = 60  
 
-# username = ''
-# password = ''
-# host = 'localhost:8080'
-# bd = ''
-# charset = 'utf8'
+
+username = 'root'
+password = 'root'
+host = 'localhost'
+port = '8080'
+bd = 'test'
+charset = 'utf8'
+
 # 'mysql+pymysql://{}:{}@{}/{}?charset='.format(username, password, host, bd, charset)
 
 # класс для конфигурации flask

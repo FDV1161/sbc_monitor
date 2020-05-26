@@ -7,65 +7,104 @@
 <h3>{{ current_sbc.name }}</h3>
 
 <div class="row">
-  <div class="col">
+  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
     <div class="jumbotron p-3">
       <h5 style="color:#6c757d;">Описание</h5>
       <p>
-        <pre>{{ current_sbc.description or "" }}</pre>
-        {% if current_sbc.description %}        
-        <button type="button" class="btn btn-link float-right" data-toggle="modal" data-target="#exampleModal">Редактировать</button>        
-        {% else %}
-        <button type="button" class="btn btn-link float-right" data-toggle="modal" data-target="#exampleModal"
-          data-whatever="@mdo">Добавить описание</button>
-        {% endif %}
-        {% include 'modal.html'%}
-        <br>
+      <pre>{{ current_sbc.description or "" }}</pre>
+      {% if current_sbc.description %}
+      <button type="button" class="btn btn-link float-right" data-toggle="modal"
+        data-target="#exampleModal">Редактировать</button>
+      {% else %}
+      <button type="button" class="btn btn-link float-right" data-toggle="modal" data-target="#exampleModal"
+        data-whatever="@mdo">Добавить описание</button>
+      {% endif %}
+      {% include 'modal.html'%}
+      <br>
       </p>
     </div>
   </div>
-  <div class="col">
+  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
     <div class="jumbotron p-3">
-      <h5 style="color:#6c757d;">Текущее состояние</h5>
-      <div class="table-responsive">
+      <div class="container">
+        <div class="row  d-flex justify-content-end">
+          <div class="nav nav-tabs btn-group" id="list-tab" role="tablist">
+            <a class="btn btn-secondary btn-sm active" id="show-info" data-toggle="list" href="#div-info" role="tab"
+              aria-controls="info">Информация</a>
+            <a class="btn btn-secondary btn-sm" id="show-settings" data-toggle="list" href="#div-settings" role="tab"
+              aria-controls="settings">Управление</a>
+          </div>
 
-        <table class="table table-borderless table-sm">
+        </div>
+        <div class="row pt-2 tab-content" id="nav-tabContent">
+          <div class="col-12 tab-pane fade show active" id="div-info" role="tabpanel" aria-labelledby="show-info">
+            <h5 class="h5" style="color:#6c757d;">Текущее состояние</h5>
+            <div class="table-responsive">
+              <table class="table table-borderless table-sm">
 
-          <tbody>
-            <tr>
-              <td class="">Состояние:</td>
-              {% if current_sbc.connected  %}
-              <td><span class="badge badge-success">Подключен</span></td>
-              {% else %}
-              <td><span class="badge badge-danger">Отключен</span></td>
-              {% endif %}
-            </tr>
-            <tr>
-              <td class="">Реальный адрес:</td>
-              {% if current_sbc_status.realAddress %}
-              <td class="">{{current_sbc_status.realAddress}}</td>
-              {% else %}
-              <td class="">не определено</td>
-              {% endif %}
-            </tr>
-            <tr>
-              <td class="">Виртуальный адрес:</td>
-              {% if current_sbc_status.realAddress %}
-              <td class="">{{current_sbc_status.virtualAddress}}</td>
-              {% else %}
-              <td class="">не определено</td>
-              {% endif %}
-            </tr>
-          </tbody>
-        </table>
+                <tbody>
+                  <tr>
+                    <td class="">Состояние:</td>
+                    {% if current_sbc.connected  %}
+                    <td><span class="badge badge-success">Подключен</span></td>
+                    {% else %}
+                    <td><span class="badge badge-danger">Отключен</span></td>
+                    {% endif %}
+                  </tr>
+                  <tr>
+                    <td class="">Реальный адрес:</td>
+                    {% if current_sbc_status.realAddress %}
+                    <td class="">{{current_sbc_status.realAddress}}</td>
+                    {% else %}
+                    <td class="">не определено</td>
+                    {% endif %}
+                  </tr>
+                  <tr>
+                    <td class="">Виртуальный адрес:</td>
+                    {% if current_sbc_status.realAddress %}
+                    <td class="">{{current_sbc_status.virtualAddress}}</td>
+                    {% else %}
+                    <td class="">не определено</td>
+                    {% endif %}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="btn-group d-flex flex-row-reverse" role="group" aria-label="Client forwarding">
+              <div>
+                <a type="button" class="btn text-white btn-sm btn-secondary"
+                  href="{{ url_for('settings', sbc=current_sbc.id) }}">Настроить переадресацию</a>
+              </div>
+            </div>
 
-        <div class="btn-group d-flex flex-row-reverse" role="group" aria-label="Basic example">
-          <div>
-            <a type="button" class="btn text-white btn-sm btn-secondary"
-              href="{{ url_for('settings', sbc=current_sbc.id) }}">Настроить переадресацию</a>
+          </div>
+          <div class="tab-pane fade" id="div-settings" role="tabpanel" aria-labelledby="show-settings">
+            <div class="container">
+              <div class="row">
+                <div class="col col-12">
+                  <form action="{{url_for('delete_client', sbc_id=current_sbc.id)}}" method="get">
+                    <button type="submit" class="btn btn-sm btn-primary">Удалить клиента</button>
+                  </form>
+                </div>
+              </div>
+              <div class="row pt-2">
+                <div class="col col-12">
+                  <form action="{{url_for('clear_logs', sbc_id=current_sbc.id)}}" method="get">
+                    <button type="submit" class="btn btn-sm btn-primary">Очистить журнал подключений</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+
           </div>
         </div>
       </div>
     </div>
+
+
+
+
   </div>
 </div>
 
@@ -80,7 +119,7 @@
       <tr>
         <th class="text-center">Порт назначения</th>
         <th class="text-center">Выделенный Порт </th>
-        <th class="text-center">Дата открытия</th>
+        <th class="text-center">Дата закрытия</th>
       </tr>
     </thead>
     <tbody>
@@ -88,7 +127,8 @@
       <tr>
         <td class="text-center">{% if port.destination_port %} {{port.destination_port}} {% endif %}</td>
         <td class="text-center">{% if port.dedicated_port %} {{port.dedicated_port}} {% endif %}</td>
-        <td class="text-center">{% if port.date_open %} {{port.date_open}} {% endif %}</td>
+        <td class="text-center">{% if port.date_open %}
+          {{ sum_date_with_minutes(port.date_open, port.time_live).strftime("%d.%m.%Y %H:%M") }} {% endif %}</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -99,10 +139,10 @@
 
 
 <div class="table-responsive">
-  
+
   <table class="table table-bordered table-hover ">
     <caption style="caption-side: top;">
-      <h5>Журнал подключений<h5>
+      <h5>Журнал подключений (количество записей: {{history.count}})<h5>
     </caption>
     <thead class="thead-light">
       <tr>
@@ -113,34 +153,36 @@
         <th class="text-center">Тип подключения</th>
       </tr>
     </thead>
-    
+
     <tbody>
       {% for record in history.list%}
-      <tr>        
+      <tr>
         <td class="text-center">{{loop.index}}</td>
-        <td class="text-center">{{record.date}}</td>
+        <td class="text-center">{{record.date.strftime("%d.%m.%Y %H:%M")}}</td>
         <td class="text-center">{{record.realAddress}}</td>
         <td class="text-center">{{record.virtualAddress}}</td>
         <td class="text-center">{{record.type}}</td>
       </tr>
       {% else %}
       <tr>
-        <td colspan="4"><h5>Нет записей<h5></td>
+        <td colspan="5">
+          <h5>Нет записей<h5>
+        </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
-  
+
 </div>
 
 {% if history.max_page %}
 <nav class="float-right" aria-label="Page navigation example">
   <ul class="pagination">
     <li class="page-item">
-      <form action="{{url_for('index', sbc=current_sbc.id, page=history.page)}}" method="get">      
-        <button type="submit" class="btn btn-sm btn-link page-link">Загрузить еще</button>      
-    </form>
-    </li>    
+      <form action="{{url_for('index', sbc=current_sbc.id, page=history.page)}}" method="get">
+        <button type="submit" class="btn btn-sm btn-link page-link">Загрузить еще</button>
+      </form>
+    </li>
   </ul>
 </nav>
 {% endif %}

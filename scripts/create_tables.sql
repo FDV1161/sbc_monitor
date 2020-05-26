@@ -132,6 +132,10 @@ LEFT OUTER JOIN logs ON logs.sbc = last_connect.sbc AND logs.date = last_connect
 
 insert into logs (sbc_id, date, type, realADdress, virtualAddress) values ("4", "2020-05-22 12:30:00", 'disconnect', "12.53.12.55", '12.62.654.98');
 
+insert into sbc (name, connected) values ('client_1', 1);
+
+
+
 
 
 <form action="{{url_for('settings', choice_sbc_id=currend_sbc)}}" method="post">
@@ -142,3 +146,29 @@ insert into logs (sbc_id, date, type, realADdress, virtualAddress) values ("4", 
 
 <button type="button" class="btn btn-secondary float-right" OnClick = "history.back ()">Назад</button>
 row[1].type|string()|lower() == "connect"
+
+def test():
+    max_date = db.session.query(func.max(Logs.date)).filter(Logs.sbc_id == sbc)
+    Logs.query.filter(and_(Logs.sbc_id==sbc, Logs.date==max_date))
+
+
+    <div class="row p-3">
+    <div class="col"></div>
+    <div class="flex">
+        <h5 style="color:#6c757d;">Используется 2 из 1000 доступных портов</h5>
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0"
+                aria-valuemax="100">25%</div>
+        </div>
+    </div>
+</div>
+
+
+cur.execute(query_stop_port(id))
+
+update forwarding set date_open = now() where id in (17, 18)
+# SELECT id, pid FROM forwarding WHERE TIMESTAMPDIFF(MINUTE, date_open, now()) > time_live;
+# DATEDIFF("2017-06-25 09:34:21", date_open);
+con = pymysql.connect(host='localhost', user='root',
+                      password='root', db='test', charset='utf8', port=8080)
+

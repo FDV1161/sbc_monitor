@@ -23,21 +23,17 @@
           <table class="table table-sm table-bordered table-hover ">
             <caption style="caption-side: top;"><h5>Передресация<h5></caption>
               <thead class="thead-light">
-                <tr>
-                  <th class="text-center">Удалить</th>
+                <tr>                  
                   <th class="text-center">Порт назначения</th>        
                   <th class="text-center">Выделенный Порт </th>
                   <th class="text-center">Дата открытия</th>
-                  <th class="text-center">Время жизни</th>
-                  <th class="text-center">Отключение</th>      
+                  <th class="text-center">Время жизни</th>                       
+                  <th class="text-center" colspan="3">Управление</th>      
                 </tr>
               </thead>
               <tbody>  
                 {% for port in sbc_ports %}
                 <tr>                  
-                  <td class="text-center">                    
-                    {% include '/forms/delete_port.html' %}
-                  </td>
                   <td class="text-center">{{port.destination_port}}</td>        
                   <td class="text-center">
                     {% if port.dedicated_port %}
@@ -46,21 +42,28 @@
                   </td>
                   <td class="text-center">
                     {% if port.date_open%}
-                      {{port.date_open}}
+                      {{port.date_open.strftime("%d.%m.%Y %H:%M")}}
                     {% endif %}
                   </td>
                   <td class="text-center">
-                    {% if port.time_live %}
-                      {{port.time_live}}
+                    {% if port.time_live %}                      
+                        {{port.time_live}} мин
                     {% endif %}
-                  </td>                
+                  </td>                  
                   <td class="text-center">
-                    <!-- <button type="submit" name="open_port" value="{{port.id}}" class="btn btn-sm btn-link">Открыть</button> -->
+                    {% include '/forms/delete_port.html' %}
+                  </td>
+                  <td class="text-center">
                     {% if port.date_open or port.dedicated_port %}
                       {% include '/forms/close_port.html' %}  
                     {% else %}
                       {% include '/forms/open_port.html' %}                    
                     {% endif %}
+                  </td>
+                  <td class="text-center">                    
+                    <form action="{{url_for('extend_time', sbc=current_sbc.id, port_id=port.id)}}" method="get">
+                      <button type="submit" class="btn btn-sm btn-link">Продлить</button>
+                    </form>
                   </td>
                   <!-- </form> -->
                 </tr>  

@@ -18,3 +18,9 @@ class LoginForm(FlaskForm):
     password = PasswordField("Пароль", validators=[InputRequired()])
     remember = BooleanField("Запомнить меня")
     submit = SubmitField("Войти")
+
+class CreateUserForm(FlaskForm):
+    username = StringField("Логин", validators=[InputRequired()])
+    password = PasswordField("Пароль", validators=[InputRequired()])
+    second_password = PasswordField("Повторите пароль", validators=[InputRequired()])
+

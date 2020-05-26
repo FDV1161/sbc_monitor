@@ -6,18 +6,15 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('logout') }}">Пользователи</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('logout') }}">Выйти</a>
-            </li>
+                <a class="nav-link" href="{{ url_for('user_managment') }}">Пользователи</a>
+            </li>              
             <li class="nav-item dropdown d-lg-none">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="collapse" data-target="#collapseListClients" aria-controls="collapseListClients" aria-expanded="false"
                 aria-label="collapse list clients">
                     Список клиентов
                 </a>
                 <div class="collapse" id="collapseListClients">
-                    {% include 'sidebar.html' %}
+                    {% include 'list_clients.html' %}
                 </div>
             </li>            
         </ul>
