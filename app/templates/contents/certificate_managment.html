@@ -1,0 +1,71 @@
+{% extends '/base.html' %}
+{% block content %}
+<div class="row pb-2">
+    <div class="col ">
+        <ul class="nav nav-tabs" style="overflow-x:auto; overflow-y:hidden; white-space: nowrap; flex-wrap: nowrap;">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#div-certificate-list">Список</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#div-certificate-create">Создание</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="row tab-content">
+    <div class="col tab-pane fade show active" id="div-certificate-list">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover ">
+                <thead class="thead-light">
+                    <tr>
+                        <th class="text-center">Статус</th>
+                        <th class="text-center">Название</th>
+                        <th class="text-center">Управление</th>
+                        <th class="text-center">Ссылка</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cert in sertificate.status %}
+                    <tr>
+                        {% if cert.recalled %}
+                        <td class="text-center">Отозван</th>
+                            {% else %}
+                        <td class="text-center">
+                            </th>
+                            {% endif %}
+                        <td class="text-center">{{cert.name}}</th>
+                        <td class="text-center">
+                            <form action="{{ url_for('recall_certificate', name=cert.name) }}">
+                                <button type="submit" class="btn btn-sm btn-link" {% if cert.recalled %} disabled
+                                    {% endif %}>Отозвать</button>
+                            </form>
+                        </td>
+                        <td class="text-center">                            
+                            <button class="btn btn-sm btn-link" type="button" data-toggle="collapse" data-target="#collapseExample{{loop.index}}">
+                                Показать
+                            </button>                            
+                            <div class="collapse" id="collapseExample{{loop.index}}">
+                                scp user@{{request.host}}:/home/dmitriy/{{cert.name}}.cert
+                                
+                            </div>                        
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 tab-pane fade" id="div-certificate-create">
+        <div class="jumbotron p-3">
+            <form action="{{url_for('certificate_managment')}}" method="post">
+                {{sertificate.forms.csrf_token}}
+                <div class="form-group">
+                    {{sertificate.forms.name.label()}}
+                    {{sertificate.forms.name(class='form-control')}}
+                </div>
+                <button type="submit" class="btn btn-primary">Создать</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

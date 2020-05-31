@@ -27,12 +27,15 @@
   <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
     <div class="jumbotron p-3">
       <div class="container">
-        <div class="row  d-flex justify-content-end">
+        <div class="row d-flex justify-content-end">
           <div class="nav nav-tabs btn-group" id="list-tab" role="tablist">
             <a class="btn btn-secondary btn-sm active" id="show-info" data-toggle="list" href="#div-info" role="tab"
               aria-controls="info">Информация</a>
-            <a class="btn btn-secondary btn-sm" id="show-settings" data-toggle="list" href="#div-settings" role="tab"
+            
+              {% if current_user.is_admin %}  
+              <a class="btn btn-secondary btn-sm" id="show-settings" data-toggle="list" href="#div-settings" role="tab"
               aria-controls="settings">Управление</a>
+              {% endif %}
           </div>
 
         </div>
@@ -78,6 +81,7 @@
             </div>
 
           </div>
+          {% if current_user.is_admin %}
           <div class="tab-pane fade" id="div-settings" role="tabpanel" aria-labelledby="show-settings">
             <div class="container">
               <div class="row">
@@ -95,9 +99,8 @@
                 </div>
               </div>
             </div>
-
-
           </div>
+          {% endif %}
         </div>
       </div>
     </div>

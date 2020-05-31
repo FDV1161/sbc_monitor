@@ -1,5 +1,5 @@
 import socket
-from .config import MIN_NUMBER_PORT, MAX_NUMBER_PORT, TIME_WAITING
+from .config import MIN_NUMBER_PORT, MAX_NUMBER_PORT, TIME_WAITING, HOME_PATH
 import subprocess
 import signal
 import os
@@ -52,3 +52,33 @@ def stop_port_forwarding(pid):
             process.terminate()
     except:
         pass
+
+
+def get_status_certificate():
+    """
+    Парсинг файла статуса сертификатов
+    """  
+    try:
+        with open(HOME_PATH + '/openvpn-ca/keys/index.txt', 'r') as file:    
+            result = []
+            for line in file:
+                spl = line.split('\t')
+                i_s = spl[-1].find('/CN=') + 4
+                i_e = spl[-1].find('/', i_s)
+                name = spl[-1][i_s:i_e:1]
+                result.append({'recalled': False if spl[0] == 'V' else True, 'name': name})
+            return result    
+    except:
+        return [{'recalled': True, 'name': 'cliend1'}, {'recalled': False, 'name': 'cliend2'}]
+    
+
+def create_certificate(client_name):
+    # создание ключей
+    os.chdir(HOME_PATH + '/openvpn-ca')
+    subprocess.call('./build-key --batch {}'.format(client_name))
+    # создание сертификата
+    os.chdir(HOME_PATH + '/client-configs')
+    subprocess.call('./make_config.sh {}'.format(client_name))
+
+def revocation_certificate(name):
+    subprocess.call('./certificate_revocation.exe {}'.format(name))

@@ -1,15 +1,25 @@
 from app import app, login_manager, database as db
-from flask import render_template, redirect, url_for, flash, abort, request
-from sqlalchemy import func, and_, or_
+from flask import render_template, redirect, url_for, flash, abort, request, jsonify
 from flask_login import login_required, current_user, login_user, logout_user
+from functools import wraps
+from sqlalchemy import func, and_, or_
+
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime
 from .models import Sbc, Forwarding, Logs, User
-from .utils import search_free_port, start_port_forwarding, stop_port_forwarding, sum_date_with_minutes
-from .forms import AddPortForm, DescriptionForm, LoginForm, CreateUserForm
+from .utils import search_free_port, start_port_forwarding, stop_port_forwarding, sum_date_with_minutes, get_status_certificate, create_certificate, revocation_certificate
+from .forms import *
 from .config import TIME_WAITING
 
 login_manager.login_view = 'login'
+
+def admin_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not current_user.is_admin:
+            return redirect(url_for('main'))
+        return f(*args, **kwargs)
+    return decorated
 
 
 @app.errorhandler(404)
@@ -50,7 +60,36 @@ def logout():
 
 @app.route("/", methods=['POST', 'GET'])
 @login_required
-def main():
+def main():    
+    if current_user.redirect_to:        
+        if current_user.forwarding.dedicated_port:        
+            return redirect('http://{}:{}'.format(request.host.split(':')[0], current_user.forwarding.dedicated_port))
+        else:
+            dest_port = current_user.forwarding.destination_port
+            # dest_addr = current_user.forwarding.sbc.virtualAddress
+            # ищем адрес назначения
+            last_date = db.session.query(func.max(Logs.date)).filter_by(sbc_id=current_user.forwarding.sbc.id)
+            dest_addr = db.session.query(Logs.virtualAddress).filter_by(sbc_id=current_user.forwarding.sbc.id, date=last_date).first()            
+            open_port = search_free_port()            
+            if dest_port and dest_addr and open_port:
+                # запускаем переадресацию            
+                process = start_port_forwarding(dest_addr, dest_port , open_port)
+                # обновляем записи в бд
+                current_user.forwarding.date_open = datetime.now()
+                current_user.forwarding.dedicated_port = dedicated_port
+                current_user.forwarding.time_live = TIME_WAITING
+                current_user.forwarding.pid = process.pid
+                try:
+                    db.session.add(dest_port)
+                    db.session.commit()
+                    return redirect('http://{}:{}'.format(request.host.split(':')[0], open_port))
+                except:
+                    db.session.rollback()
+                    process.kill()
+                    flash('Не удалось открыть порт', 'error')
+            else:
+                flash('Не удалось открыть порт. Все порты заняты', 'error')        
+    
     list_sbc_status = Sbc.query.all()
     list_sbc_with_active_forwarding = db.session.query(Sbc).outerjoin(
         Forwarding).filter(Forwarding.pid != None).all()
@@ -102,6 +141,34 @@ def index(sbc, page=1):
     }
     forms = {'description': descriptionForm}
     return render_template('contents/sbc.html', list_sbc_status=list_sbc_status, current_sbc=current_sbc, current_sbc_status=current_sbc_status, sbc_ports=sbc_ports, history=history, forms=forms, sum_date_with_minutes=sum_date_with_minutes)
+
+
+@app.route("/delete_client/<int:sbc_id>")
+@login_required
+@admin_required
+def delete_client(sbc_id):
+    sbc = Sbc.query.get(sbc_id)
+    try:
+        db.session.delete(sbc)
+        db.session.commit()
+    except:
+        db.session.rollback()
+        flash("Не удалось удалить клиента")
+        return redirect(url_for('index', sbc=sbc_id))
+    return redirect(url_for('main'))
+
+
+@app.route("/clear_logs/<int:sbc_id>")
+@login_required
+@admin_required
+def clear_logs(sbc_id):
+    Logs.query.filter_by(sbc_id=sbc_id).delete()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
+        flash("Не удалось отчистить журнал подключений")
+    return redirect(url_for('index', sbc=sbc_id))
 
 
 @app.route("/settings/<int:sbc>", methods=['GET', 'POST'])
@@ -269,9 +336,9 @@ def delete_port(sbc, port_id):
     """
     forwarding = Forwarding.query.get(port_id)
     if forwarding.pid:
-        stop_port_forwarding(forwarding.pid)
-    Forwarding.query.filter_by(id=port_id).delete()
+        stop_port_forwarding(forwarding.pid)    
     try:
+        Forwarding.query.filter_by(id=port_id).delete()
         db.session.commit()
     except:
         db.session.rollback()
@@ -281,7 +348,19 @@ def delete_port(sbc, port_id):
 
 @app.route("/users/", methods=['post', 'get'])
 @login_required
-def user_managment():
+@admin_required
+def user_managment():    
+    user_list = User.query.all()    
+    users = {'list': user_list}
+    list_sbc_status = Sbc.query.all()
+    return render_template('contents/user_managment.html', list_sbc_status=list_sbc_status, users=users)
+
+
+@app.route("/users/create", methods=['post', 'get'])
+@login_required
+@admin_required
+def user_managment_create():    
+    user_list = User.query.all()
     create_user_form = CreateUserForm()
     if create_user_form.validate_on_submit():
         if create_user_form.password.data == create_user_form.second_password.data:
@@ -290,21 +369,81 @@ def user_managment():
             try:
                 db.session.add(user)
                 db.session.commit()
+                return redirect(url_for('user_managment_create'))
             except:
                 db.session.rollback()
                 flash("Не удалось создать клиента")
-    list_users = User.query.all()
+        else:
+            flash("Пароли не совпадают")
+    users = {'list': user_list,'forms': {'create': create_user_form}}
     list_sbc_status = Sbc.query.all()
-    return render_template('contents/user_managment.html', list_sbc_status=list_sbc_status, list_users=list_users, create_user_form=create_user_form)
+    return render_template('contents/user_managment.html', list_sbc_status=list_sbc_status, users=users)
+
+
+@app.route("/users/rule", methods=['post', 'get'])
+@login_required
+@admin_required
+def user_managment_rule():    
+    user_list = User.query.all()    
+    user_rule_form = UserRuleForm()    
+    user_rule_form.user.choices = [(u.id, u.username) for u in user_list]
+    if user_rule_form.validate_on_submit():
+        user = User.query.get(user_rule_form.user.data)
+        user.is_admin = user_rule_form.rule.data
+        try:            
+            db.session.commit()
+            return redirect(url_for('user_managment_rule'))
+        except:
+            flash("Не удалось изменить права пользователя")
+            db.session.rollback()        
+    users = {'list': user_list, 'forms': {'rule': user_rule_form}}
+    list_sbc_status = Sbc.query.all()
+    return render_template('contents/user_managment.html', list_sbc_status=list_sbc_status, users=users)
+
+
+@app.route("/users/forwarding", methods=['post', 'get'])
+@login_required
+@admin_required
+def user_managment_forwarding():    
+    user_list = User.query.all()
+    forwarding_form = OnForwardingUserForm()
+    forwarding_form.user.choices = [(u.id, u.username) for u in user_list]
+    forwarding_form.client.choices = [(c.id, c.name) for c in Sbc.query.all()]
+    if forwarding_form.validate_on_submit():
+        u = User.query.get(forwarding_form.user.data)            
+        f = Forwarding.query.filter_by(sbc_id=forwarding_form.client.data, destination_port=forwarding_form.port.data).first()
+        if not forwarding_form.port.data:
+            u.redirect_to = forwarding_form.port.data
+        elif f:
+            u.redirect_to = f.id
+        else:
+            f = Forwarding(sbc_id=forwarding_form.client.data, destination_port=forwarding_form.port.data)
+            db.session.add(f)
+            db.session.flush()
+            u.redirect_to = f.id
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+        return redirect(url_for('user_managment_forwarding'))    
+    users = {'list': user_list, 'forms': {'forwarding': forwarding_form}}
+    list_sbc_status = Sbc.query.all()    
+    return render_template('contents/user_managment.html', list_sbc_status=list_sbc_status, users=users)
+
 
 
 @app.route("/delete_user/<int:user_id>")
 @login_required
+@admin_required
 def delete_user(user_id):
     if User.query.count() <= 1:
         flash("Не удалось удалить пользователя. Нельзя удалить последнего пользователя", 'error')
         return redirect(url_for('user_managment'))
+    count_admin = User.query.filter(User.is_admin == True).count()
     user = User.query.get(user_id)
+    if user.is_admin and count_admin <=1:
+        flash("Не удалось удалить пользователя. Нельзя удалить последнего пользователя c правами администратора", 'error')
+        return redirect(url_for('user_managment'))
     try:
         db.session.delete(user)
         db.session.commit()
@@ -315,30 +454,68 @@ def delete_user(user_id):
     return redirect(url_for('user_managment'))
 
 
-@app.route("/delete_client/<int:sbc_id>")
+@app.route("/certificates/", methods=['post', 'get'])
 @login_required
-def delete_client(sbc_id):
-    sbc = Sbc.query.get(sbc_id)
-    try:
-        db.session.delete(sbc)
-        db.session.commit()
-    except:
-        db.session.rollback()
-        flash("Не удалось удалить клиента")
-        return redirect(url_for('index', sbc=sbc_id))
-    return redirect(url_for('main'))
+@admin_required
+def certificate_managment():    
+    create_cert_form = CreateCertificateForm()
+    if create_cert_form.validate_on_submit(): 
+        try:       
+            create_certificate(create_cert_form.name.data)
+        except:
+            flash("Не удалось создать сертификат", 'error')
+        return redirect(url_for('certificate_managment'))        
+    
+    sertificate = {
+        'status': get_status_certificate(),
+        'forms': create_cert_form 
+    }
+    list_sbc_status = Sbc.query.all()
+    # list_sbc_status=list_sbc_status, list_users=list_users, create_user_form=create_user_form
+    return render_template('contents/certificate_managment.html', list_sbc_status=list_sbc_status, sertificate=sertificate)
 
 
-@app.route("/clear_logs/<int:sbc_id>")
+@app.route("/recall_certificate/<string:name>")
 @login_required
-def clear_logs(sbc_id):
-    Logs.query.filter_by(sbc_id=sbc_id).delete()
-    try:
-        db.session.commit()
-    except:
-        db.session.rollback()
-        flash("Не удалось отчистить журнал подключений")
-    return redirect(url_for('index', sbc=sbc_id))
+@admin_required
+def recall_certificate(name):
+    revocation_certificate(name)
+    
+
+
+@app.route("/user_list")
+@login_required
+def user_list():
+    users = User.query.all()    
+    return jsonify([{ 'id': i.id, 'name': i.username } for i in users])
+
+
+@app.route("/client_list")
+@login_required
+def client_list():
+    clients = Sbc.query.all()    
+    return jsonify([{ 'id': i.id, 'name': i.name } for i in clients])
+
+
+@app.route("/port_list/<int:id>")
+@login_required
+def port_list(id):
+    forwarding = Forwarding.query.filter_by(sbc_id=id)
+    return jsonify([{ 'id': i.id, 'name': i.destination_port } for i in forwarding])
+
+
+
+
+
+
+
+
+
+
+    
+
+
+    
 
 
 def add_port(port, sbc):
@@ -383,3 +560,13 @@ def update_description(id, text):
         db.session.commit()
     except:
         db.session.rollback()
+
+
+
+    
+
+
+
+
+
+
