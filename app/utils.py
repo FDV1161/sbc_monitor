@@ -10,7 +10,6 @@ import datetime
 def sum_date_with_minutes(date, min):
     return date + datetime.timedelta(minutes=min)
 
-
 def search_free_port():
     """
     Поиск сводоного порта
@@ -24,7 +23,7 @@ def search_free_port():
             return port
         except OSError:
             port += 1
-    raise None
+    return None
 
 
 def start_port_forwarding(destination_address, destination_port, dedicated_port, timer_waiting=TIME_WAITING):
@@ -37,7 +36,7 @@ def start_port_forwarding(destination_address, destination_port, dedicated_port,
         "--cport={}".format(destination_port),
         "--caddr={}".format(destination_address),
         "--timeout=60"
-    ]
+    ]    
     process = subprocess.Popen(command)
     return process
 
@@ -69,16 +68,21 @@ def get_status_certificate():
                 result.append({'recalled': False if spl[0] == 'V' else True, 'name': name})
             return result    
     except:
-        return [{'recalled': True, 'name': 'cliend1'}, {'recalled': False, 'name': 'cliend2'}]
+        return []
     
 
-def create_certificate(client_name):
+def create_certificate(name):
     # создание ключей
     os.chdir(HOME_PATH + '/openvpn-ca')
-    subprocess.call('./build-key --batch {}'.format(client_name))
+    subprocess.call('. ./vars && ./build-key --batch {}'.format(name), shell=True)
     # создание сертификата
     os.chdir(HOME_PATH + '/client-configs')
-    subprocess.call('./make_config.sh {}'.format(client_name))
+    subprocess.call('./make_config.sh {}'.format(name), shell=True)
+
 
 def revocation_certificate(name):
-    subprocess.call('./certificate_revocation.exe {}'.format(name))
+    os.chdir(HOME_PATH + '/openvpn-ca')
+    subprocess.call('. ./vars && ./revoke-full {}'.format(name), shell=True)
+    # копируем файл
+    os.chdir('/var/www/sbc_monitor')
+    subprocess.call('./certificate_revocation.bin {}'.format(name), shell=True)

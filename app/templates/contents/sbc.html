@@ -48,7 +48,7 @@
                 <tbody>
                   <tr>
                     <td class="">Состояние:</td>
-                    {% if current_sbc.connected  %}
+                    {% if current_sbc_status.type|string()|lower() == "connect"  %}
                     <td><span class="badge badge-success">Подключен</span></td>
                     {% else %}
                     <td><span class="badge badge-danger">Отключен</span></td>

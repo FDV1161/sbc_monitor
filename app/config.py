@@ -10,7 +10,7 @@ password = 'root'
 host = 'localhost'
 port = '8080'
 bd = 'test3'
-charset = 'utf8'
+charset = 'utf8mb4'
 
 
 

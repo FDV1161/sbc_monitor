@@ -11,7 +11,7 @@ class Sbc(db.Model):
     connected = db.Column(db.Boolean)
     description = db.Column(db.Text)
     # Foreign keys:
-    logs = db.relationship('Logs', cascade="all, delete", backref='logs', lazy=True)    
+    logs = db.relationship('Logs', cascade="all, delete", backref='sbc', lazy=True)    
     forwarding = db.relationship('Forwarding', cascade="all, delete", backref="sbc", lazy=True)
 
 

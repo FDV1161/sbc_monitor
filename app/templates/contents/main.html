@@ -1,14 +1,22 @@
 {% extends '/base.html' %}
 {% block content %}
 
+
+<div class="row">    
+    <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+        <div class="jumbotron p-1">
+            <h5 style="color:#6c757d;">Портов используется: {{client.forwarding.count}} / {{client.forwarding.count_max}} </h5>
+        </div>
+    </div>
+</div>
 <div class="row">
     <div class="col">
         <div class="jumbotron p-3">
-            {% if list_notactive_clients %}
-            <h5 style="color:#6c757d;">Подключены {{count_active_clients}} из {{count_all_clients}} клиентов</h5>
+            {% if client.list_not_active %}
+            <h5 style="color:#6c757d;">Подключены {{client.count_active}} из {{ client.count}} клиентов</h5>
             <h5 style="color:#6c757d;">Неактивные клиенты</h5>
             <ul class="list-group list-group-flush overflow-auto" style="max-height: 200px;">
-                {% for sbc in list_notactive_clients%}
+                {% for sbc in client.list_not_active %}
                 <a class="list_element list-group-item list-group-item-action" style="cursor: pointer"
                     href="{{ url_for('index', sbc=sbc.id) }}">{{sbc.name}}</a>
                 {% endfor %}
@@ -20,11 +28,11 @@
     </div>
     <div class="col">
         <div class="jumbotron p-3">
-            {% if list_sbc_with_active_forwarding %}
-            <h5 style="color:#6c757d;">Переадресация включена у {{ list_sbc_with_active_forwarding|length }} клиентов
+            {% if client.forwarding.list_active %}
+            <h5 style="color:#6c757d;">Переадресация включена у {{ client.forwarding.list_active|length }} клиентов
             </h5>
             <ul class="list-group list-group-flush overflow-auto" style="max-height: 200px;"></ul>
-            {% for sbc in list_sbc_with_active_forwarding %}
+            {% for sbc in client.forwarding.list_active %}
             <a class="list_element list-group-item list-group-item-action" style="cursor: pointer"
                 href="{{ url_for('index', sbc=sbc.id) }}">{{sbc.name}}</a>
             {% endfor %}
