@@ -69,7 +69,7 @@ def get_status_certificate():
                     result.append({'recalled': False if spl[0] == 'V' else True, 'name': name})
             return result    
     except:
-        return []
+        return [{'recalled': True, 'name': "sb_1"}, {'recalled': True, 'name': "sb_2"}, {'recalled': False, 'name': "sb_2"}]
     
 
 def create_certificate(name):

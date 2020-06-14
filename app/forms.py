@@ -27,6 +27,9 @@ class CreateUserForm(FlaskForm):
 class CreateCertificateForm(FlaskForm):
     name = StringField("Название сертификата", validators=[InputRequired()])
 
+class RecalCertForm(FlaskForm):
+    cert = SelectField('Сертификат')
+
 class UserRuleForm(FlaskForm):
     user = SelectField('Пользователь', coerce=int)
     rule = SelectField('Права', coerce=int, choices=[(1, 'Администратор'), (0, 'Пользователь')])

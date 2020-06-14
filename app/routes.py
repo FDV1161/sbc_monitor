@@ -396,34 +396,49 @@ def delete_user(user_id):
     return redirect(url_for('user_managment'))
 
 
-@app.route("/certificates/", methods=['post', 'get'])
+@app.route("/certificates/")
 @login_required
 @admin_required
 def certificate_managment():    
+    sertificate = {'status': get_status_certificate(), 'forms': None}
+    list_sbc_status = sidebar_content()
+    return render_template('contents/certificate_managment.html', list_sbc_status=list_sbc_status, sertificate=sertificate)
+
+
+@app.route("/certificates/create/", methods=['post', 'get'])
+@login_required
+@admin_required
+def certificate_create():    
     create_cert_form = CreateCertificateForm()
     if create_cert_form.validate_on_submit(): 
         try:       
             create_certificate(create_cert_form.name.data)
         except:
             flash("Не удалось создать сертификат", 'error')
-        return redirect(url_for('certificate_managment'))    
-    sertificate = {
-        'status': get_status_certificate(),
-        'forms': create_cert_form 
-    }
-    list_sbc_status = sidebar_content()    
+        return redirect(url_for('certificate_managment'))        
+    list_sbc_status = sidebar_content()
+    sertificate = {'status': [], 'forms': create_cert_form}
     return render_template('contents/certificate_managment.html', list_sbc_status=list_sbc_status, sertificate=sertificate)
 
 
-@app.route("/recall_certificate/<string:name>")
+@app.route("/certificates/recall/", methods=['post', 'get'])
 @login_required
 @admin_required
-def recall_certificate(name):
-    try:
-        revocation_certificate(name)
-    except:
-        flash("Возникла ошибка при отзыве сертификата", 'error')
-    return redirect(url_for('certificate_managment'))
+def certificate_recall():
+    list_cert = [[c.get('name')]*2 for c in get_status_certificate() if not c.get('recalled')]
+    cert_from = RecalCertForm()
+    cert_from.cert.choices = list_cert
+    if cert_from.validate_on_submit():
+        try:
+            if cert_from.cert.data != 'server':
+                revocation_certificate(cert_from.cert.data)
+                return redirect(url_for('certificate_managment'))
+        except:
+            flash("Возникла ошибка при отзыве сертификата", 'error')
+    sertificate = {'status': [], 'forms': cert_from}     
+    list_sbc_status = sidebar_content()
+    return render_template('contents/certificate_managment.html', list_sbc_status=list_sbc_status, sertificate=sertificate)
+    # return redirect(url_for('certificate_managment'))
 
 
 def list_notactive_client():
