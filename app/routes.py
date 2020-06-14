@@ -432,10 +432,13 @@ def list_notactive_client():
     return Sbc.query.filter(Sbc.id.in_(l)).all()
 
 
-def sidebar_content():    
+def sidebar_content():
+    # максимальный id логов по группам
     s = db.session.query(func.max(Logs.id)).group_by(Logs.sbc_id).subquery()
-    q = db.session.query(Sbc.id, Sbc.name, Logs.type).filter(Logs.id.in_(s)).join(Sbc, Sbc.id==Logs.sbc_id)    
-    return [dict(zip(["id", "name", "type"], row)) for row in q.all()]     
+    # логи с максимальным id в группе
+    ss = db.session.query(Logs).filter(Logs.id.in_(s)).subquery()
+    q = db.session.query(Sbc.id, Sbc.name, ss.c.type).outerjoin(ss, Sbc.id==ss.c.sbc_id)    
+    return [dict(zip(["id", "name", "type"], row)) for row in q.all()]
 
 
 def last_log(sbc_id):
