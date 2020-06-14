@@ -1,5 +1,5 @@
 import socket
-from .config import MIN_NUMBER_PORT, MAX_NUMBER_PORT, TIME_WAITING, HOME_PATH
+from .config import MIN_NUMBER_PORT, MAX_NUMBER_PORT, TIME_WAITING, Path
 import subprocess
 import signal
 import os
@@ -26,7 +26,7 @@ def search_free_port():
     return None
 
 
-def start_port_forwarding(destination_address, destination_port, dedicated_port, timer_waiting=TIME_WAITING):
+def start_port_forwarding(destination_address, destination_port, dedicated_port):
     """
     Запускает проброс порта
     """
@@ -58,7 +58,7 @@ def get_status_certificate():
     Парсинг файла статуса сертификатов
     """  
     try:
-        with open(HOME_PATH + '/openvpn-ca/keys/index.txt', 'r') as file:    
+        with open(Path.CERTLIST, 'r') as file:    
             result = []
             for line in file:
                 spl = line.split('\t')
@@ -74,16 +74,16 @@ def get_status_certificate():
 
 def create_certificate(name):
     # создание ключей
-    os.chdir(HOME_PATH + '/openvpn-ca')
+    os.chdir(Path.OPENVPNCA)
     subprocess.call('. ./vars && ./build-key --batch {}'.format(name), shell=True)
     # создание сертификата
-    os.chdir(HOME_PATH + '/client-configs')
+    os.chdir(Path.CLIENTCONFIGS)
     subprocess.call('./make_config.sh {}'.format(name), shell=True)
 
 
 def revocation_certificate(name):
-    os.chdir(HOME_PATH + '/openvpn-ca')
+    os.chdir(Path.OPENVPNCA)
     subprocess.call('. ./vars && ./revoke-full {}'.format(name), shell=True)
     # копируем файл
-    os.chdir('/var/www/sbc_monitor')
+    os.chdir(Path.COPYCRLPEN)
     subprocess.call('./certificate_revocation.bin {}'.format(name), shell=True)
