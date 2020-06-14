@@ -65,7 +65,8 @@ def get_status_certificate():
                 i_s = spl[-1].find('/CN=') + 4
                 i_e = spl[-1].find('/', i_s)
                 name = spl[-1][i_s:i_e:1]
-                result.append({'recalled': False if spl[0] == 'V' else True, 'name': name})
+                if name.lower().strip() != 'server':
+                    result.append({'recalled': False if spl[0] == 'V' else True, 'name': name})
             return result    
     except:
         return []
