@@ -110,7 +110,7 @@ def index(sbc, page=1):
     # количество логов
     count_logs = Logs.query.filter(Logs.sbc_id == sbc).count()
     history = {
-        'list': Logs.query.order_by(Logs.date.desc()).filter(Logs.sbc_id == sbc).limit(10 * page),
+        'list': Logs.query.order_by(Logs.id.desc()).filter(Logs.sbc_id == sbc).limit(10 * page),
         'page': page + 1,
         'max_page': False if count_logs / (page * 10) <= 1 else True,
         'count': count_logs
