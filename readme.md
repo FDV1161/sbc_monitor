@@ -76,6 +76,11 @@ client-connect "project/venv/bin/python3" "project/scripts/parse_openvpn.py"
 sudo apt-get install libapache2-mod-wsgi-py3
 ```
 
+Возможно потребуется включить модуль, для этого можно воспользоваться следующей командой 
+````text
+sudo a2enmod wsgi
+````
+
 После его установки необходимо настроить виртуальный хост apache. Для этого в папке `/etc/apache2/sites-available/` необходимо создать файл `sbc_monitor.conf` со следующим содержанием:
 
 ``` text
