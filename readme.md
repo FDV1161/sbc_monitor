@@ -124,7 +124,10 @@ service apache2 restart
 
 ``` text
 sudo iptables -I INPUT -p tcp --dport MIN_VALUE_PORT:MAX_VALUE_PORT -j ACCEPT
+или
+ufw allow MIN_VALUE_PORT:MAX_VALUE_PORT/tcp
 ```
+Вместо MIN_VALUE_PORT:MAX_VALUE_PORT можно указать один порт
 
 ## Переадресация
 
